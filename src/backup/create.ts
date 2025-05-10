@@ -8,7 +8,7 @@ import { logger } from "../helpers/logger";
 export default async function createBackup(worldPath: string): Promise<void> {
   logger({
     context: "BACKUP",
-    message: `Realizando backup do servidor...`,
+    message: `Realizando backup do servidor`,
     type: "info",
   });
 
@@ -19,7 +19,7 @@ export default async function createBackup(worldPath: string): Promise<void> {
     await fsExtra.copy(worldPath, backupDir);
     logger({
       context: "BACKUP",
-      message: `Backup do servidor criado com sucesso.`,
+      message: `Backup do servidor criado com sucesso`,
       type: "success",
     });
   } catch (error) {

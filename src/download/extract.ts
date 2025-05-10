@@ -14,11 +14,12 @@ export default function ({ filePath, serverDir }: ExtractProps): void {
 
     logger({
       context: "DOWNLOAD",
-      message: `Servidor extraído com sucesso para o diretório ${serverDir}`,
+      message: `Servidor extraído com sucesso`,
       type: "success",
     });
 
-    fs.unlinkSync(filePath); // Remove o .zip após extrair
+    // Remove o .zip após extrair
+    fs.unlinkSync(filePath);
   } catch (err: any) {
     throw err;
   }

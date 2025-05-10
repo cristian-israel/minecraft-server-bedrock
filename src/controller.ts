@@ -6,8 +6,8 @@ import createBackup from "./backup/create";
 
 import downloadServer from "./download";
 import extract from "./download/extract";
-import { logger } from "./helpers/logger";
 import cleanServerDir from "./server/cleanServerDir";
+import { logger } from "./helpers/logger";
 
 export default async function controllerServer() {
   try {

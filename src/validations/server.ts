@@ -20,7 +20,7 @@ export default function validateServer(): iReturn {
   if (!serverExists || !worldExists) {
     logger({
       context: "VALIDATION",
-      message: `Servidor ou mundo não encontrado.`,
+      message: `Servidor ou mundo não encontrado`,
       type: "error",
     });
 

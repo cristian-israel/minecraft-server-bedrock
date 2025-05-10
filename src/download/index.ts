@@ -32,7 +32,7 @@ export default async function ({
 
     logger({
       context: "DOWNLOAD",
-      message: `Baixando a versão mais recente do servidor...`,
+      message: `Baixando a versão mais recente do servidor`,
       type: "info",
     });
 
@@ -60,7 +60,7 @@ export default async function ({
 
     logger({
       context: "DOWNLOAD",
-      message: "Download concluído com sucesso.",
+      message: "Download concluído com sucesso",
       type: "success",
     });
 
