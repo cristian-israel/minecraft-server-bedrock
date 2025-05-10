@@ -1,10 +1,14 @@
 import axios from "axios";
-import { MINECRAFT_URL } from "../helpers/urls";
+import SystemInfo from "../helpers/system";
+
+const MINECRAFT_URL = "https://www.minecraft.net/pt-br/download/server/bedrock";
 
 interface DownloadLink {
   urlDownload: string;
   recentVersion: string;
 }
+
+const { minecraftResponseVersionRegex } = SystemInfo.getInstance();
 
 export default async function (): Promise<DownloadLink> {
   try {
@@ -16,9 +20,7 @@ export default async function (): Promise<DownloadLink> {
       },
     });
 
-    const regex =
-      /https:\/\/www\.minecraft\.net\/bedrockdedicatedserver\/bin-win\/bedrock-server-(.*?)\.zip/g;
-    const match = regex.exec(data);
+    const match = minecraftResponseVersionRegex.exec(data);
 
     if (!match || !match[0] || !match[1]) {
       throw new Error("Link de download ou versão não encontrado.");

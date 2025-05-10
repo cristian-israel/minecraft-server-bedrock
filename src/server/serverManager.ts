@@ -2,11 +2,15 @@ import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import path from "path";
 import { logger } from "../helpers/logger";
 import { SERVER_DIR } from "../helpers/paths";
+import SystemInfo from "../helpers/system";
 
 let serverProcess: ChildProcessWithoutNullStreams | null = null;
 
+const { systemType } = SystemInfo.getInstance();
+
 const executableName =
-  process.platform === "win32" ? "bedrock_server.exe" : "./bedrock_server";
+  systemType === "Windows" ? "bedrock_server.exe" : "./bedrock_server";
+
 const SERVER_EXECUTABLE_PATH = path.join(SERVER_DIR, executableName);
 
 export const serverManager = {

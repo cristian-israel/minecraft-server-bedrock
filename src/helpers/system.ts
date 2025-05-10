@@ -16,8 +16,18 @@ class SystemInfo {
     return SystemInfo.instance;
   }
 
-  public get type(): "Windows" | "Linux" {
+  public get systemType(): "Windows" | "Linux" {
     return this.osType;
+  }
+
+  public get minecraftResponseVersionRegex(): RegExp {
+    if (this.osType === "Windows") {
+      return /https:\/\/www\.minecraft\.net\/bedrockdedicatedserver\/bin-win\/bedrock-server-(.*?)\.zip/g;
+    } else if (this.osType === "Linux") {
+      return /https:\/\/www\.minecraft\.net\/bedrockdedicatedserver\/bin-linux\/bedrock-server-(.*?)\.zip/g;
+    } else {
+      throw new Error("Sistema operacional não suportado.");
+    }
   }
 }
 

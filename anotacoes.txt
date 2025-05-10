@@ -1,5 +1,0 @@
-fs-extra - para cópias e exclusões avançadas
-
-adm-zip / unzipper - para extração
-
-cross-spawn - para rodar comandos de forma compatível
