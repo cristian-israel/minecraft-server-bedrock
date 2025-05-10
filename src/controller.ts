@@ -1,5 +1,6 @@
 import { SERVER_DIR } from "./helpers/paths";
 
+import { serverManager } from "./server/serverManager";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
 import createBackupWorlds from "./backup/create";
@@ -45,6 +46,9 @@ export default async function updateMinecraftServer() {
       message: `Servidor atualizado para a versão mais recente: ${recentVersion}`,
       type: "success",
     });
+
+    serverManager.start();
+
   } catch (error) {
     logger({
       context: "APP",
