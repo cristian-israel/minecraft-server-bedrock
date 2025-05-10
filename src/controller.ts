@@ -1,9 +1,20 @@
-import { logger } from "./helpers/logger";
 import server from "./validations/server";
+import recentServer from "./validations/recentServer";
+import { logger } from "./helpers/logger";
 
-export default function controllerServer() {
+export default async function controllerServer() {
   try {
     const { serverPath, worldPath, version } = server();
+    const { urlDownload, recentVersion } = await recentServer();
+
+    // Verificar se a versão do servidor é diferente da versão mais recente
+    if (version !== recentVersion) {
+      logger({
+        context: "APP",
+        message: `Nova versão do servidor encontrada: ${recentVersion}`,
+        type: "info",
+      });
+    }
 
     debugger;
   } catch (error) {
