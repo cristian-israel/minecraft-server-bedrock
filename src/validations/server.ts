@@ -2,12 +2,14 @@ import fs from "fs";
 import path from "path";
 
 import { SERVER_DIR } from "../helpers/paths";
+import { version } from "../config/server.json";
+import { logger } from "../helpers/logger";
 
 // Validar se o servidor existe
 interface iReturn {
-  exists: boolean;
-  world: boolean;
-  version: string;
+  serverPath: string;
+  worldPath?: string;
+  version?: string;
 }
 
 export default function (): iReturn {
@@ -17,24 +19,36 @@ export default function (): iReturn {
 
   // Verificar se o servidor existe
   if (!fs.existsSync(serverPath)) {
-    return {
-      exists: false,
-      world: false,
-      version: "",
-    };
-  } else if (!fs.existsSync(worldPath)) {
-    return {
-      exists: true,
-      world: false,
-      version: "",
-    };
-  } else {
-    // Verificar a versão do servidor
+    logger({
+      context: "VALIDATION",
+      message: `Servidor não encontrado no caminho ${serverPath}`,
+      type: "error",
+    });
 
     return {
-      exists: true,
-      world: true,
-      version: "1.20.30",
+      serverPath,
+      worldPath: undefined,
+      version: undefined,
+    };
+
+    // Verificar se o mundo existe
+  } else if (!fs.existsSync(worldPath)) {
+    logger({
+      context: "VALIDATION",
+      message: `Mundo não encontrado no caminho ${worldPath}`,
+      type: "error",
+    });
+
+    return {
+      serverPath: serverPath,
+      worldPath: undefined,
+      version: undefined,
+    };
+  } else {
+    return {
+      serverPath,
+      worldPath,
+      version: version ? version : undefined,
     };
   }
 }

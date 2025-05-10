@@ -2,6 +2,15 @@ import { logger } from "./helpers/logger";
 import server from "./validations/server";
 
 export default function controllerServer() {
-  const { exists, world, version } = server();
-  debugger;
+  try {
+    const { serverPath: exists, worldPath: world, version } = server();
+
+    debugger;
+  } catch (error) {
+    logger({
+      context: "APP",
+      message: `Erro ao executar a rotina de atualização do servidor: ${error}`,
+      type: "error",
+    });
+  }
 }

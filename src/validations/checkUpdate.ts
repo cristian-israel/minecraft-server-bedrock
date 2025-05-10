@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 import { SERVER_DIR } from "../helpers/paths";
-import { getDownloadLink } from "../download/getDownloadLink";
+import { getDownloadLink } from "./getDownloadLink";
 import { backupServer } from "../backup/backup";
 import { downloadServer } from "../download/downloadServer";
 import { extractServer } from "../download/extract";

@@ -1,4 +1,4 @@
-type LogContext = "APP" | "DOWNLOAD" | "BACKUP" | "SERVER";
+type LogContext = "APP" | "DOWNLOAD" | "BACKUP" | "SERVER" | "VALIDATION" ;
 type LogType = "info" | "error" | "success" | "warning";
 
 interface ILogProps {
