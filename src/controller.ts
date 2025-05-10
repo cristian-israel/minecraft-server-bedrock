@@ -41,7 +41,11 @@ export default async function controllerServer() {
     // Copiar os arquivos do servidor para o diretório do servidor atualizado
     if (worldPath) await copyBackupWorlds(worldPath);
 
-    debugger;
+    logger({
+      context: "APP",
+      message: `Servidor atualizado para a versão mais recente: ${recentVersion}`,
+      type: "success",
+    });
   } catch (error) {
     logger({
       context: "APP",

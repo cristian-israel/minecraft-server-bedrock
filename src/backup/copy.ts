@@ -12,7 +12,7 @@ export default async function copyBackupWorlds(
 
     logger({
       context: "BACKUP",
-      message: `Backup de mundos criado com sucesso`,
+      message: `Backup de mundos copiado com sucesso`,
       type: "success",
     });
   } catch (error) {
