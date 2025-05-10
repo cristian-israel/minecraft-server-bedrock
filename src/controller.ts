@@ -1,6 +1,5 @@
 import { SERVER_DIR } from "./helpers/paths";
 
-import { serverManager } from "./server/serverManager";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
 import createBackupWorlds from "./backup/create";
@@ -47,14 +46,15 @@ export default async function updateMinecraftServer() {
       type: "success",
     });
 
-    serverManager.start();
+    // serverManager.start("a")
 
   } catch (error) {
     logger({
       context: "APP",
-      message: `Erro: ${(error instanceof Error ? error.message : String(error))}`,
+      message: `Erro: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
       type: "error",
     });
-    
   }
 }
