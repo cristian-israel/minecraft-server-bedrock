@@ -1,5 +1,4 @@
 import path from "path";
-import moment from "moment";
 import fsExtra from "fs-extra";
 
 import { BACKUP_DIR } from "../helpers/paths";
@@ -13,10 +12,10 @@ export default async function copyBackupWorlds(
 
     logger({
       context: "BACKUP",
-      message: `Backup do servidor criado com sucesso`,
+      message: `Backup de mundos criado com sucesso`,
       type: "success",
     });
   } catch (error) {
-    throw new Error(`Erro ao copiar o backup de mundos do servidor: ${error}`);
+    throw new Error(`Erro ao copiar o backup de mundos: ${error}`);
   }
 }
