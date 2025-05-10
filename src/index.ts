@@ -3,6 +3,7 @@ import cron from "node-cron";
 import SystemInfo from "./helpers/system";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
+import { serverManager } from "./server/serverManager";
 
 console.clear();
 
@@ -14,13 +15,15 @@ logger({
   type: "success",
 });
 
+serverManager.stop();
+
 // cron.schedule("0 * * * *", () => {
 
-logger({
-  context: "APP",
-  message: `Executando rotina de atualização do servidor...`,
-  type: "info",
-});
+// logger({
+//   context: "APP",
+//   message: `Executando rotina de atualização do servidor...`,
+//   type: "info",
+// });
 
-updateMinecraftServer();
+// updateMinecraftServer();
 // });
