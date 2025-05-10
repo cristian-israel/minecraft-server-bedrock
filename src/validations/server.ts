@@ -6,7 +6,6 @@ import { version } from "../config/server.json";
 import { logger } from "../helpers/logger";
 
 interface iReturn {
-  serverPath?: string;
   worldPath?: string;
   version?: string;
 }
@@ -18,26 +17,17 @@ export default function validateServer(): iReturn {
   const serverExists = fs.existsSync(serverPath);
   const worldExists = fs.existsSync(worldPath);
 
-  if (!serverExists) {
+  if (!serverExists || !worldExists) {
     logger({
       context: "VALIDATION",
-      message: `Servidor não encontrado no caminho ${serverPath}`,
+      message: `Servidor ou mundo não encontrado.`,
       type: "error",
     });
+
     return {};
   }
 
-  if (!worldExists) {
-    logger({
-      context: "VALIDATION",
-      message: `Mundo não encontrado no caminho ${worldPath}`,
-      type: "error",
-    });
-    return { serverPath };
-  }
-
   return {
-    serverPath,
     worldPath,
     version: version || undefined,
   };

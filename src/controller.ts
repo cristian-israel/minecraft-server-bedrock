@@ -4,8 +4,21 @@ import { logger } from "./helpers/logger";
 
 export default async function controllerServer() {
   try {
-    const { serverPath, worldPath, version } = server();
+    const { worldPath, version } = server();
     const { urlDownload, recentVersion } = await recentServer();
+
+    // Se existir serverPath e worldPath, realizar backup
+    if (worldPath) {
+      logger({
+        context: "APP",
+        message: `Realizando backup do servidor...`,
+        type: "info",
+      });
+
+      // await backupServer(worldPath);
+    }
+
+    debugger;
 
     // Verificar se a versão do servidor é diferente da versão mais recente
     if (version !== recentVersion) {
@@ -15,8 +28,6 @@ export default async function controllerServer() {
         type: "info",
       });
     }
-
-    debugger;
   } catch (error) {
     logger({
       context: "APP",
