@@ -3,7 +3,7 @@ import server from "./validations/server";
 
 export default function controllerServer() {
   try {
-    const { serverPath: exists, worldPath: world, version } = server();
+    const { serverPath, worldPath, version } = server();
 
     debugger;
   } catch (error) {
