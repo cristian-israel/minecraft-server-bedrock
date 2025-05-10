@@ -3,12 +3,11 @@ import { SERVER_DIR } from "./helpers/paths";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
 import createBackupWorlds from "./backup/create";
-
 import downloadServer from "./download";
-import extract from "./download/extract";
 import cleanServerDir from "./server/cleanServerDir";
-import { logger } from "./helpers/logger";
 import copyBackupWorlds from "./backup/copy";
+import extract from "./download/extract";
+import { logger } from "./helpers/logger";
 
 export default async function controllerServer() {
   try {
