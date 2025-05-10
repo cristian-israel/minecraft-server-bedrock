@@ -1,10 +1,12 @@
+import { SERVER_DIR } from "./helpers/paths";
+
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
-import downloadServer from "./download";
+import create from "./backup/create";
 
-import { logger } from "./helpers/logger";
+import downloadServer from "./download";
 import extract from "./download/extract";
-import { SERVER_DIR } from "./helpers/paths";
+import { logger } from "./helpers/logger";
 
 export default async function controllerServer() {
   try {
@@ -29,7 +31,7 @@ export default async function controllerServer() {
         type: "info",
       });
 
-      // await backupServer(worldPath);
+      await create(worldPath);
     }
 
     // Instalar a versão mais recente do servidor

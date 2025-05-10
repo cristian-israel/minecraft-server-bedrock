@@ -5,7 +5,7 @@ import fsExtra from "fs-extra";
 
 import { BACKUP_DIR, SERVER_DIR } from "../helpers/paths";
 
-export async function backupServer(): Promise<void> {
+export default async function (): Promise<void> {
   // Verifica se o diretório de mundo existe, se não existir retorna log
   if (!fs.existsSync(path.join(SERVER_DIR, "worlds"))) {
     console.log("[BACKUP] Diretório de mundos não encontrado.");
