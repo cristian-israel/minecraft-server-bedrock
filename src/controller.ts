@@ -2,12 +2,13 @@ import { SERVER_DIR } from "./helpers/paths";
 
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
-import createBackup from "./backup/create";
+import createBackupWorlds from "./backup/create";
 
 import downloadServer from "./download";
 import extract from "./download/extract";
 import cleanServerDir from "./server/cleanServerDir";
 import { logger } from "./helpers/logger";
+import copyBackupWorlds from "./backup/copy";
 
 export default async function controllerServer() {
   try {
@@ -29,13 +30,16 @@ export default async function controllerServer() {
     const filePath = await downloadServer({ urlDownload, recentVersion });
 
     // Criar backup do servidor atual
-    if (worldPath) await createBackup(worldPath);
+    if (worldPath) await createBackupWorlds(worldPath);
 
     // Deletar o servidor atual
     cleanServerDir(SERVER_DIR);
 
     // Extrair os arquivos do servidor
     extract({ serverDir: SERVER_DIR, filePath });
+
+    // Copiar os arquivos do servidor para o diretório do servidor atualizado
+    if (worldPath) await copyBackupWorlds(worldPath);
 
     debugger;
   } catch (error) {

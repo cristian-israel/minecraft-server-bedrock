@@ -1,31 +1,29 @@
 import path from "path";
-import moment from "moment";
 import fsExtra from "fs-extra";
 
 import { BACKUP_DIR } from "../helpers/paths";
 import { logger } from "../helpers/logger";
 
-export default async function createBackup(worldPath: string): Promise<void> {
+export default async function createBackupWorlds(
+  worldPath: string
+): Promise<void> {
   logger({
     context: "BACKUP",
-    message: `Realizando backup do servidor`,
+    message: `Realizando backup de mundos do servidor`,
     type: "info",
   });
 
-  const timestamp = moment().format("YYYY-MM-DD_HH-mm-ss");
-  const backupDir = path.join(BACKUP_DIR, `worlds-${timestamp}`);
-
   try {
-    await fsExtra.copy(worldPath, backupDir);
+    await fsExtra.copy(worldPath, path.join(BACKUP_DIR, "worlds"));
     logger({
       context: "BACKUP",
-      message: `Backup do servidor criado com sucesso`,
+      message: `Backup de mundos do servidor criado com sucesso`,
       type: "success",
     });
   } catch (error) {
     logger({
       context: "BACKUP",
-      message: `Erro ao criar backup: ${error}`,
+      message: `Erro ao criar backup de mundos: ${error}`,
       type: "error",
     });
 
