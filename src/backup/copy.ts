@@ -5,10 +5,10 @@ import { BACKUP_DIR } from "../helpers/paths";
 import { logger } from "../helpers/logger";
 
 export default async function copyBackupWorlds(
-  destinationDirectory: string
+  worldPath: string
 ): Promise<void> {
   try {
-    await fsExtra.copy(path.join(BACKUP_DIR, "worlds"), destinationDirectory);
+    await fsExtra.copy(path.join(BACKUP_DIR, "worlds"), worldPath);
 
     logger({
       context: "BACKUP",
