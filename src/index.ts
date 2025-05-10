@@ -6,11 +6,9 @@ import { logger } from "./helpers/logger";
 
 console.clear();
 
-const { type: systemType } = SystemInfo.getInstance();
-
 logger({
   context: "APP",
-  message: `Sistema de atualização do servidor Bedrock iniciado, sistema operacional: ${systemType}`,
+  message: "Sistema de atualização do servidor Bedrock iniciado",
   type: "success",
 });
 
