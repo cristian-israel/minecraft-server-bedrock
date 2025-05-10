@@ -3,7 +3,7 @@ import path from "path";
 
 // Caminhos absolutos para os diretórios do projeto
 export const PROJECT_DIR = process.cwd();
-export const CACHCE_DIR = path.join(PROJECT_DIR, "cache");
+export const CACHCE_DIR = path.join(PROJECT_DIR, ".cache");
 if (!fs.existsSync(CACHCE_DIR)) {
   fs.mkdirSync(CACHCE_DIR);
 }

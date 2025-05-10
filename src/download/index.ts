@@ -22,12 +22,19 @@ export default async function ({
     if (fs.existsSync(filePath)) {
       logger({
         context: "DOWNLOAD",
-        message: `Arquivo já existe, não é necessário baixar novamente: ${filePath}`,
+        message:
+          "Arquivo do servidor já existe, não é necessário baixar novamente",
         type: "info",
       });
 
       return filePath;
     }
+
+    logger({
+      context: "DOWNLOAD",
+      message: `Baixando a versão mais recente do servidor...`,
+      type: "info",
+    });
 
     const writer = fs.createWriteStream(filePath);
 
@@ -53,7 +60,7 @@ export default async function ({
 
     logger({
       context: "DOWNLOAD",
-      message: `Download concluído com sucesso: ${filePath}`,
+      message: "Download concluído com sucesso.",
       type: "success",
     });
 

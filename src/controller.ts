@@ -2,11 +2,12 @@ import { SERVER_DIR } from "./helpers/paths";
 
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
-import create from "./backup/create";
+import createBackup from "./backup/create";
 
 import downloadServer from "./download";
 import extract from "./download/extract";
 import { logger } from "./helpers/logger";
+import cleanServerDir from "./server/cleanServerDir";
 
 export default async function controllerServer() {
   try {
@@ -22,27 +23,16 @@ export default async function controllerServer() {
       });
 
       return;
-
-      // Se existir worldPath, realizar backup do mundo
-    } else if (worldPath) {
-      logger({
-        context: "APP",
-        message: `Realizando backup do servidor...`,
-        type: "info",
-      });
-
-      await create(worldPath);
     }
 
     // Instalar a versão mais recente do servidor
-    logger({
-      context: "APP",
-      message: `Baixando a versão mais recente do servidor...`,
-      type: "info",
-    });
-
-    // Executar o download do servidor atualizado
     const filePath = await downloadServer({ urlDownload, recentVersion });
+
+    // Criar backup do servidor atual
+    if (worldPath) await createBackup(worldPath);
+
+    // Deletar o servidor atual
+    cleanServerDir(SERVER_DIR);
 
     // Extrair os arquivos do servidor
     extract({ serverDir: SERVER_DIR, filePath });

@@ -1,7 +1,8 @@
-import SystemInfo from "./helpers/system";
-import { logger } from "./helpers/logger";
-import controllerServer from "./controller";
 import cron from "node-cron";
+
+import SystemInfo from "./helpers/system";
+import controllerServer from "./controller";
+import { logger } from "./helpers/logger";
 
 console.clear();
 
