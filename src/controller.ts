@@ -45,7 +45,7 @@ export default async function controllerServer() {
   } catch (error) {
     logger({
       context: "APP",
-      message: `Erro ao executar a rotina de atualização do servidor: ${error}`,
+      message: `Erro ao executar o controlador do servidor: ${error}`,
       type: "error",
     });
   }

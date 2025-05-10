@@ -21,12 +21,6 @@ export default async function createBackupWorlds(
       type: "success",
     });
   } catch (error) {
-    logger({
-      context: "BACKUP",
-      message: `Erro ao criar backup de mundos: ${error}`,
-      type: "error",
-    });
-
-    throw error;
+    throw new Error(`Erro ao criar o backup de mundos do servidor: ${error}`);
   }
 }

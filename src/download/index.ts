@@ -65,7 +65,7 @@ export default async function ({
     });
 
     return filePath;
-  } catch (error: any) {
-    throw new Error(`Erro ao executar download do servidor: ${error.message}`);
+  } catch (error) {
+    throw new Error(`Erro ao executar download do servidor: ${error}`);
   }
 }

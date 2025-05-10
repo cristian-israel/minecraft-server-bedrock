@@ -28,7 +28,7 @@ export default async function (): Promise<DownloadLink> {
       urlDownload: match[0],
       recentVersion: match[1],
     };
-  } catch (error: any) {
-    throw new Error(`Erro ao buscar o link de download: ${error.message}`);
+  } catch (error) {
+    throw new Error(`Erro ao buscar o link de download: ${error}`);
   }
 }

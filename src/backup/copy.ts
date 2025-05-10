@@ -10,18 +10,13 @@ export default async function copyBackupWorlds(
 ): Promise<void> {
   try {
     await fsExtra.copy(path.join(BACKUP_DIR, "worlds"), destinationDirectory);
+
     logger({
       context: "BACKUP",
       message: `Backup do servidor criado com sucesso`,
       type: "success",
     });
   } catch (error) {
-    logger({
-      context: "BACKUP",
-      message: `Erro ao criar backup: ${error}`,
-      type: "error",
-    });
-
-    throw error;
+    throw new Error(`Erro ao copiar o backup de mundos do servidor: ${error}`);
   }
 }
