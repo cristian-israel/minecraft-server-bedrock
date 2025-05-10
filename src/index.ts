@@ -15,7 +15,7 @@ logger({
   type: "success",
 });
 
-serverManager.stop();
+serverManager.start();
 
 // cron.schedule("0 * * * *", () => {
 

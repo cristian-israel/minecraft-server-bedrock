@@ -1,10 +1,10 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
-import net from "net";
 import path from "path";
 
-import { logger } from "../helpers/logger";
-import { SERVER_DIR } from "../helpers/paths";
 import SystemInfo from "../helpers/system";
+import { SERVER_DIR } from "../helpers/paths";
+import { checkPort } from "./commands/windowns";
+import { logger } from "../helpers/logger";
 
 let serverProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -26,33 +26,32 @@ export const serverManager = {
       return;
     }
 
-    const PORT = 19132;
+    const PORTS = [19132, 19133];
 
-    const portInUse = await isPortInUse(PORT);
-    if (portInUse) {
-      logger({
-        context: "SERVER",
-        message: `Porta ${PORT} já está em uso. Tentando liberar...`,
-        type: "warning",
-      });
-
-      await killPortProcess(PORT);
-
-      const stillInUse = await isPortInUse(PORT);
-      if (stillInUse) {
+    for (const port of PORTS) {
+      const inUse = await checkPort(port);
+      if (inUse) {
         logger({
           context: "SERVER",
-          message: `Não foi possível liberar a porta ${PORT}.`,
-          type: "error",
+          message: `Porta ${port} em uso. Tentando liberar...`,
+          type: "warning",
         });
-        return;
+        await killPortProcess(port);
+        const stillInUse = await checkPort(port);
+        if (stillInUse) {
+          logger({
+            context: "SERVER",
+            message: `Falha ao liberar a porta ${port}.`,
+            type: "error",
+          });
+          return;
+        }
+        logger({
+          context: "SERVER",
+          message: `Porta ${port} liberada com sucesso.`,
+          type: "success",
+        });
       }
-
-      logger({
-        context: "SERVER",
-        message: `Porta ${PORT} liberada com sucesso.`,
-        type: "success",
-      });
     }
 
     serverProcess = spawn(SERVER_EXECUTABLE_PATH, [], {
@@ -75,6 +74,7 @@ export const serverManager = {
       type: "success",
     });
   },
+
   stop: function () {
     if (!serverProcess) {
       logger({
@@ -142,41 +142,3 @@ export const serverManager = {
     return !!serverProcess;
   },
 };
-
-function isPortInUse(port: number): Promise<boolean> {
-  return new Promise((resolve) => {
-    const tester = net
-      .createServer()
-      .once("error", () => resolve(true))
-      .once("listening", () => {
-        tester.close();
-        resolve(false);
-      })
-      .listen(port);
-  });
-}
-
-async function killPortProcess(port: number) {
-  if (systemType === "Windows") {
-    const command = spawn("powershell.exe", [
-      "-Command",
-      `
-        $port = ${port};
-        $p = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue;
-        if ($p) {
-          $pid = $p.OwningProcess;
-          Stop-Process -Id $pid -Force;
-        }
-      `,
-    ]);
-
-    return new Promise<void>((resolve) => {
-      command.on("close", () => resolve());
-    });
-  } else {
-    const killer = spawn("fuser", ["-k", `${port}/udp`]);
-    return new Promise<void>((resolve) => {
-      killer.on("close", () => resolve());
-    });
-  }
-}

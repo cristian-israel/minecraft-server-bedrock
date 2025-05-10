@@ -1,8 +1,10 @@
 import { platform } from "os";
 
+export type SystemTypes = "Windows" | "Linux";
+
 class SystemInfo {
   private static instance: SystemInfo;
-  private readonly osType: "Windows" | "Linux";
+  private readonly osType: SystemTypes;
 
   private constructor() {
     const rawPlatform = platform();
