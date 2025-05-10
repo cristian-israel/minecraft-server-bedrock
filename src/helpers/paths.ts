@@ -6,4 +6,4 @@ export const CACHCE_DIR = path.join(PREJECT_DIR, "cache");
 
 // Caminhos absolutos para os diretórios do servidor
 export const SERVER_DIR = path.join(PREJECT_DIR, "minecraftServer");
-export const BACKUP_DIR = path.join(PREJECT_DIR, "backups");
+export const BACKUP_DIR = path.join(PREJECT_DIR, "minecraftServerBackups");
