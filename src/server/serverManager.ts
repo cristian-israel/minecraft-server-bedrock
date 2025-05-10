@@ -3,7 +3,7 @@ import path from "path";
 
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR } from "../helpers/paths";
-import { checkPort } from "./commands/windowns";
+import { checkPort, killPortProcess } from "../helpers/commands";
 import { logger } from "../helpers/logger";
 
 let serverProcess: ChildProcessWithoutNullStreams | null = null;

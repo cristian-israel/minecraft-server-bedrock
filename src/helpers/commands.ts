@@ -67,28 +67,69 @@ export function checkPort(port: number): Promise<boolean> {
 }
 
 export function killPortProcess(port: number): Promise<void> {
-  if (systemType === "Windows") {
-    const command = spawn("powershell.exe", [
-      "-Command",
-      `
-			$port = ${port};
-			$p = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue;
-			if ($p) {
-				$pid = $p.OwningProcess;
-				Stop-Process -Id $pid -Force;
-			}
-		`,
-    ]);
+  return new Promise((resolve, reject) => {
+    if (systemType === "Windows") {
+      const command = spawn("powershell.exe", [
+        "-Command",
+        `
+          $port = ${port};
+          $p = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue;
+          if ($p) {
+            $procId = $p.OwningProcess;
+            Stop-Process -Id $procId -Force;
+          } else {
+            Write-Host "Nenhum processo encontrado na porta $port"
+          }
+        `,
+      ]);
 
-    return new Promise<void>((resolve) => {
-      command.on("close", () => resolve());
-    });
-  } else if (systemType === "Linux") {
-    const killer = spawn("fuser", ["-k", `${port}/udp`]);
-    return new Promise<void>((resolve) => {
-      killer.on("close", () => resolve());
-    });
-  } else {
-    throw new Error("Sistema operacional não suportado");
-  }
+      let stderr = "";
+      command.stderr.on("data", (data) => {
+        stderr += data.toString();
+      });
+
+      command.on("close", (code) => {
+        if (code !== 0 || stderr) {
+          return reject(
+            new Error(
+              `Erro ao matar processo na porta ${port}: ${
+                stderr || "código de saída " + code
+              }`
+            )
+          );
+        }
+        resolve();
+      });
+
+      command.on("error", (err) => {
+        reject(err);
+      });
+    } else if (systemType === "Linux") {
+      const killer = spawn("fuser", ["-k", `${port}/udp`]);
+
+      let stderr = "";
+      killer.stderr.on("data", (data) => {
+        stderr += data.toString();
+      });
+
+      killer.on("close", (code) => {
+        if (code !== 0 || stderr) {
+          return reject(
+            new Error(
+              `Erro ao matar processo na porta ${port}: ${
+                stderr || "código de saída " + code
+              }`
+            )
+          );
+        }
+        resolve();
+      });
+
+      killer.on("error", (err) => {
+        reject(err);
+      });
+    } else {
+      reject(new Error("Sistema operacional não suportado"));
+    }
+  });
 }
