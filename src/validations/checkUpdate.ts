@@ -4,9 +4,9 @@ import path from "path";
 import { SERVER_DIR } from "../helpers/paths";
 import { getDownloadLink } from "./recentServer";
 import { backupServer } from "../backup/backup";
-import { downloadServer } from "../download/downloadServer";
+import { downloadServer } from "../download";
 import { extractServer } from "../download/extract";
-import { restartServer } from "../server/server";
+import { restartServer } from "../server/init";
 
 // Função principal
 export default async function () {

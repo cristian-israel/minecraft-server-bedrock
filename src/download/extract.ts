@@ -1,15 +1,25 @@
 import fs from "fs";
-import path from "path";
 import AdmZip from "adm-zip";
+import { logger } from "../helpers/logger";
 
-export async function extractServer(filePath: string, serverDir: string): Promise<void> {
+interface ExtractProps {
+  filePath: string;
+  serverDir: string;
+}
+
+export default function ({ filePath, serverDir }: ExtractProps): void {
   try {
     const zip = new AdmZip(filePath);
     zip.extractAllTo(serverDir, true);
-    console.log("[EXTRAÇÃO] Atualização concluída.");
+
+    logger({
+      context: "DOWNLOAD",
+      message: `Servidor extraído com sucesso para o diretório ${serverDir}`,
+      type: "success",
+    });
+
     fs.unlinkSync(filePath); // Remove o .zip após extrair
   } catch (err: any) {
-    console.error("Erro ao extrair o arquivo:", err.message);
     throw err;
   }
 }
