@@ -9,7 +9,7 @@ import copyBackupWorlds from "./backup/copy";
 import extract from "./download/extract";
 import { logger } from "./helpers/logger";
 
-export default async function controllerServer() {
+export default async function updateMinecraftServer() {
   try {
     const { worldPath, version } = server();
     const { urlDownload, recentVersion } = await recentServer();
@@ -48,8 +48,9 @@ export default async function controllerServer() {
   } catch (error) {
     logger({
       context: "APP",
-      message: `Erro ao executar o controlador do servidor: ${error}`,
+      message: `Erro: ${(error instanceof Error ? error.message : String(error))}`,
       type: "error",
     });
+    
   }
 }

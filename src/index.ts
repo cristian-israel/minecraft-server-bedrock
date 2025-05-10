@@ -1,7 +1,7 @@
 import cron from "node-cron";
 
 import SystemInfo from "./helpers/system";
-import controllerServer from "./controller";
+import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
 
 console.clear();
@@ -22,5 +22,5 @@ logger({
   type: "info",
 });
 
-controllerServer();
+updateMinecraftServer();
 // });

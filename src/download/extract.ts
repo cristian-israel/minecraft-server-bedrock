@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import AdmZip from "adm-zip";
 import { logger } from "../helpers/logger";
 
@@ -7,20 +8,35 @@ interface ExtractProps {
   serverDir: string;
 }
 
-export default function ({ filePath, serverDir }: ExtractProps): void {
+export default function extractZip({ filePath, serverDir }: ExtractProps): void {
   try {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Arquivo ZIP não encontrado: ${filePath}`);
+    }
+
     const zip = new AdmZip(filePath);
     zip.extractAllTo(serverDir, true);
 
     logger({
       context: "DOWNLOAD",
-      message: `Servidor extraído com sucesso`,
+      message: `Servidor extraído com sucesso para ${serverDir}`,
       type: "success",
     });
 
-    // Remove o .zip após extrair
+    // Remover arquivo ZIP
     fs.unlinkSync(filePath);
-  } catch (err: any) {
-    throw err;
+    logger({
+      context: "DOWNLOAD",
+      message: `Arquivo ${path.basename(filePath)} removido após extração`,
+      type: "info",
+    });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    logger({
+      context: "DOWNLOAD",
+      message: `Erro ao extrair o servidor: ${errMsg}`,
+      type: "error",
+    });
+    throw error;
   }
 }
