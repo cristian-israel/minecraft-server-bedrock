@@ -127,6 +127,8 @@ export const ServerManager = {
         logStream.write(logCommand);
         process.stdin.write(command + "\n");
         return resolve();
+      } else if (systemType === "Linux") {
+        // DESENVOLVIMENTO
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
@@ -143,41 +145,50 @@ export const ServerManager = {
           message: "Servidor não está em execução.",
           type: "info",
         });
+
         return resolve();
       }
 
-      const onMessage = (message: string) => {
-        if (message.includes("Quit correctly")) {
-          logger({
-            context: "SERVER",
-            message: "Servidor Minecraft encerrado corretamente.",
-            type: "info",
-          });
+      if (systemType === "Windows") {
+        const onMessage = (message: string) => {
+          if (message.includes("Quit correctly")) {
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft encerrado corretamente.",
+              type: "info",
+            });
 
+            stdoutListeners.delete(onMessage);
+            cleanup();
+            resolve();
+          }
+        };
+
+        const onExit = () => {
           stdoutListeners.delete(onMessage);
           cleanup();
           resolve();
-        }
-      };
+        };
 
-      const onExit = (code: number) => {
-        stdoutListeners.delete(onMessage);
-        cleanup();
-        resolve();
-      };
+        const cleanup = () => {
+          if (process) {
+            process.off("exit", onExit);
+          }
+          process = null;
+          isReady = false;
+        };
 
-      const cleanup = () => {
-        if (process) {
-          process.off("exit", onExit);
-        }
-        process = null;
-        isReady = false;
-      };
+        stdoutListeners.add(onMessage);
+        process.once("exit", onExit);
 
-      stdoutListeners.add(onMessage);
-      process.once("exit", onExit);
-
-      this.sendCommand("stop");
+        this.sendCommand("stop");
+      } else if (systemType === "Linux") {
+        // DESENVOLVIMENTO
+      } else {
+        return reject(
+          new Error("Comando não suportado para o sistema operacional atual.")
+        );
+      }
     });
   },
 
