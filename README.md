@@ -7,8 +7,3 @@ Sistema automatizado para gerenciar servidores Minecraft Bedrock em ambientes **
 - ⬇️ Download da versão mais recente
 - 🛠️ Extração e substituição dos arquivos do servidor
 - 🔁 Reinício automático do servidor após atualização
-
-{
-  verificar_porta: "netstat -ano | findstr :19132";
-  matar_processo: "Stop-Process -Id PID -Force";
-}

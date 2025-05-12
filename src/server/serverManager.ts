@@ -1,5 +1,4 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
-import net from "net";
 import { join } from "path";
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR } from "../helpers/paths";
