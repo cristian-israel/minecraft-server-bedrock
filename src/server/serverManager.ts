@@ -34,6 +34,7 @@ export const ServerManager = {
           message: "Servidor já está em execução.",
           type: "info",
         });
+
         return resolve();
       } else if (updating) {
         logger({
@@ -41,6 +42,7 @@ export const ServerManager = {
           message: "Servidor está em atualização.",
           type: "info",
         });
+
         return resolve();
       }
 
