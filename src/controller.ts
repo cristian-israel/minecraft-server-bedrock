@@ -1,6 +1,5 @@
-import fs from "fs";
-
 import { SERVER_DIR } from "./helpers/paths";
+
 import { ServerManager } from "./server/serverManager";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
