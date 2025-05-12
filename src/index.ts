@@ -14,15 +14,15 @@ console.clear();
     await initBotTelegram();
     await ServerManager.start();
 
-    // cron.schedule("0 * * * *", async () => {
-    logger({
-      context: "APP",
-      message: `Executando rotina de atualização do servidor...`,
-      type: "info",
-    });
+    cron.schedule("0 * * * *", async () => {
+      logger({
+        context: "APP",
+        message: `Executando rotina de atualização do servidor...`,
+        type: "info",
+      });
 
-    await updateMinecraftServer();
-    // });
+      await updateMinecraftServer();
+    });
 
     logger({
       context: "APP",
