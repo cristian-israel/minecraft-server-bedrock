@@ -94,6 +94,52 @@ export const ServerManager = {
         });
       } else if (systemType === "Linux") {
         // DESENVOLVIMENTO
+
+        process = spawn("./bedrock_server", {
+          cwd: SERVER_DIR,
+          detached: true,
+          shell: true,
+        });
+
+        process.stdout.on("data", (data) => {
+          const message = data.toString().trim();
+          logStream.write(`${message}\n`);
+
+          // Detecta servidor pronto
+          if (
+            !isReady &&
+            message.includes(
+              "======================================================"
+            )
+          ) {
+            isReady = true;
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft está pronto para comandos.",
+              type: "info",
+            });
+            resolve();
+          }
+
+          // Notifica ouvintes
+          stdoutListeners.forEach((callback) => callback(message));
+        });
+
+        process.stderr.on("data", (data) => {
+          const message = data.toString();
+          logStream.write(`[ERROR] ${message}\n`);
+        });
+
+        process.on("exit", () => {
+          process = null;
+          isReady = false;
+        });
+
+        logger({
+          context: "SERVER",
+          message: "Servidor Minecraft bedrock iniciado.",
+          type: "success",
+        });
       } else {
         reject(new Error("Sistema operacional não suportado."));
       }
