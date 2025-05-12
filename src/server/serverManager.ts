@@ -184,7 +184,7 @@ export const ServerManager = {
   },
 
   getUpdating(): boolean {
-    return updating;
+    return !!updating;
   },
 
   setUpdating(value: boolean) {
@@ -204,6 +204,7 @@ export const ServerManager = {
         message: `Erro ao ler o arquivo de configuração: ${error}`,
         type: "error",
       });
+
       return { version: "", updateDate: "" };
     }
   },

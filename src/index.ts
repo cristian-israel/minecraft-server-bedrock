@@ -2,7 +2,6 @@ import cron from "node-cron";
 import dotenv from "dotenv";
 
 import initBotTelegram from "./telegram";
-import { ServerManager } from "./server/serverManager";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
 
@@ -12,7 +11,7 @@ console.clear();
 (async () => {
   try {
     await initBotTelegram();
-    await ServerManager.start();
+    await updateMinecraftServer();
 
     cron.schedule("0 * * * *", async () => {
       logger({

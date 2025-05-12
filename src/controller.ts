@@ -60,6 +60,8 @@ export default async function updateMinecraftServer() {
 
     // Iniciar o servidor
     await ServerManager.start();
+
+    return;
   } catch (error) {
     logger({
       context: "APP",
