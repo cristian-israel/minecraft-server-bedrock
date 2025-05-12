@@ -35,6 +35,13 @@ export const ServerManager = {
           type: "info",
         });
         return resolve();
+      } else if (updating) {
+        logger({
+          context: "SERVER",
+          message: "Servidor está em atualização.",
+          type: "info",
+        });
+        return resolve();
       }
 
       if (systemType === "Windows") {

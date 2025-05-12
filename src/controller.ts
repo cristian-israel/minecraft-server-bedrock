@@ -27,6 +27,8 @@ export default async function updateMinecraftServer() {
       return;
     }
 
+    ServerManager.setUpdating(true);
+
     // Parar o servidor
     if (ServerManager.getRunning()) await ServerManager.stop();
 
@@ -50,6 +52,9 @@ export default async function updateMinecraftServer() {
       message: `Servidor atualizado para a versão mais recente: ${recentVersion}`,
       type: "success",
     });
+
+    // Atualizar estado de execução do servidor
+    ServerManager.setUpdating(true);
 
     // Atualizar version de server.json
     ServerManager.updateVersion(recentVersion);
