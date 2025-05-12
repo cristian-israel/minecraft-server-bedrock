@@ -9,6 +9,7 @@ import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
 
+const nameScreen = "minecraft_server_bedrock";
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
 let updating = false;
@@ -93,7 +94,7 @@ export const ServerManager = {
         });
       } else if (systemType === "Linux") {
         // Iniciar o servidor no Linux usando o comando `screen`
-        process = spawn("screen", ["-dmS", "bedrock", "./bedrock_server"], {
+        process = spawn("screen", ["-dmS", nameScreen, "./bedrock_server"], {
           cwd: SERVER_DIR,
           shell: true,
         });
@@ -163,10 +164,14 @@ export const ServerManager = {
         // Enviar o comando para o servidor via screen no Linux
         const logCommand = `\n[SERVER] Comando enviado: ${command}\n`;
         logStream.write(logCommand);
-        spawn("screen", ["-S", "bedrock", "-p", "0", "-X", "stuff", `${command}\n`], {
-          cwd: SERVER_DIR,
-          shell: true,
-        });
+        spawn(
+          "screen",
+          ["-S", "bedrock", "-p", "0", "-X", "stuff", `${command}\n`],
+          {
+            cwd: SERVER_DIR,
+            shell: true,
+          }
+        );
         return resolve();
       } else {
         return reject(
