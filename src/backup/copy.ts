@@ -1,14 +1,14 @@
 import path from "path";
 import fsExtra from "fs-extra";
 
-import { CACHCE_DIR } from "../helpers/paths";
+import { CACHE_DIR } from "../helpers/paths";
 import { logger } from "../helpers/logger";
 
 export default async function copyBackupWorlds(
   worldPath: string
 ): Promise<void> {
   try {
-    await fsExtra.copy(path.join(CACHCE_DIR, "worlds"), worldPath);
+    await fsExtra.copy(path.join(CACHE_DIR, "worlds"), worldPath);
 
     logger({
       context: "BACKUP",

@@ -3,7 +3,7 @@ import { join } from "path";
 import { createWriteStream, writeFileSync } from "fs";
 
 import SystemInfo from "../helpers/system";
-import { SERVER_DIR, CACHCE_DIR } from "../helpers/paths";
+import { SERVER_DIR, CACHE_DIR } from "../helpers/paths";
 import configJson from "./config.json";
 import { logger } from "../helpers/logger";
 
@@ -12,7 +12,7 @@ const { systemType } = SystemInfo.getInstance();
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
 
-const logStream = createWriteStream(join(CACHCE_DIR, "server.log"), {
+const logStream = createWriteStream(join(CACHE_DIR, "server.log"), {
   flags: "a",
 });
 

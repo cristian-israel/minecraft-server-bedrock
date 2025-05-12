@@ -3,7 +3,7 @@ import path from "path";
 import axios from "axios";
 import { finished } from "stream/promises";
 
-import { CACHCE_DIR } from "../helpers/paths";
+import { CACHE_DIR } from "../helpers/paths";
 import { logger } from "../helpers/logger";
 
 interface iProps {
@@ -16,7 +16,7 @@ export default async function ({
   recentVersion,
 }: iProps): Promise<string> {
   try {
-    const filePath = path.join(CACHCE_DIR, `server-${recentVersion}.zip`);
+    const filePath = path.join(CACHE_DIR, `server-${recentVersion}.zip`);
 
     // Verifica se o arquivo já existe
     if (fs.existsSync(filePath)) {

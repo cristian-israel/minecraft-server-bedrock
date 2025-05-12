@@ -5,13 +5,33 @@ import path from "path";
 export const PROJECT_DIR = process.cwd();
 
 // Local onde os arquivos de download serão armazenados
-export const CACHCE_DIR = path.join(PROJECT_DIR, ".cache");
-if (!fs.existsSync(CACHCE_DIR)) {
-  fs.mkdirSync(CACHCE_DIR);
+export const CACHE_DIR = path.join(PROJECT_DIR, ".cache");
+if (!fs.existsSync(CACHE_DIR)) {
+  fs.mkdirSync(CACHE_DIR);
 }
 
 // Local onde o servidor será instalado e executado
 export const SERVER_DIR = path.join(PROJECT_DIR, "minecraftServer");
 if (!fs.existsSync(SERVER_DIR)) {
   fs.mkdirSync(SERVER_DIR);
+}
+
+// Caminho para o arquivo de configuração
+export const CONFIG_SERVER_FILE = path.join(
+  PROJECT_DIR,
+  "src",
+  "server",
+  "config.json"
+);
+
+// Garante que o diretório src/server existe
+const CONFIG_DIR = path.dirname(CONFIG_SERVER_FILE);
+if (!fs.existsSync(CONFIG_DIR)) {
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+}
+
+// Cria o arquivo se não existir
+if (!fs.existsSync(CONFIG_SERVER_FILE)) {
+  fs.writeFileSync(CONFIG_SERVER_FILE, JSON.stringify({}, null, 2));
+  console.log("Arquivo config.json criado com sucesso.");
 }
