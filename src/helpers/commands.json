@@ -3,5 +3,6 @@
 	"Listar screens": "screen -ls",
 	"Entrar em screen": "screen -r minecraft_server_bedrock",
 	"Desconectar screen": "Ctrl + A + D",
+	"Encerrar screen (dentro)": "Ctrl + D",
 	"Encerrar screen": "screen -X -S minecraft_server_bedrock quit"
 }
