@@ -9,6 +9,7 @@ import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
 
+const nameScreen = "minecraft_server_bedrock";
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
 let updating = false;
@@ -92,7 +93,17 @@ export const ServerManager = {
           type: "success",
         });
       } else if (systemType === "Linux") {
-        // DESENVOLVER O CÓDIGO PARA LINUX
+        console.log(SERVER_DIR);
+
+        process = spawn("./bedrock_server", {
+          cwd: SERVER_DIR,
+        });
+
+        logger({
+          context: "SERVER",
+          message: "Servidor Minecraft iniciado no Linux.",
+          type: "success",
+        });
       } else {
         reject(new Error("Sistema operacional não suportado."));
       }
@@ -116,7 +127,19 @@ export const ServerManager = {
         process.stdin.write(command + "\n");
         return resolve();
       } else if (systemType === "Linux") {
-        // DESENVOLVER O CÓDIGO PARA LINUX} else {
+        // Enviar o comando para o servidor via screen no Linux
+        const logCommand = `\n[SERVER] Comando enviado: ${command}\n`;
+        logStream.write(logCommand);
+        spawn(
+          "screen",
+          ["-S", "bedrock", "-p", "0", "-X", "stuff", `${command}\n`],
+          {
+            cwd: SERVER_DIR,
+            shell: true,
+          }
+        );
+        return resolve();
+      } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
         );
@@ -170,7 +193,45 @@ export const ServerManager = {
 
         this.sendCommand("stop");
       } else if (systemType === "Linux") {
-        // DESENVOLVER O CÓDIGO PARA LINUX} else {
+        // Enviar o comando "stop" para o servidor no Linux
+        const onMessage = (message: string) => {
+          if (message.includes("Quit correctly")) {
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft encerrado corretamente no Linux.",
+              type: "info",
+            });
+
+            stdoutListeners.delete(onMessage);
+            cleanup();
+            resolve();
+          }
+        };
+
+        const onExit = () => {
+          stdoutListeners.delete(onMessage);
+          cleanup();
+          resolve();
+        };
+
+        const cleanup = () => {
+          process = null;
+          isReady = false;
+        };
+
+        stdoutListeners.add(onMessage);
+        process.once("exit", onExit);
+
+        // Enviar o comando "stop" via screen no Linux
+        spawn(
+          "screen",
+          ["-S", nameScreen, "-p", "0", "-X", "stuff", "stop\n"],
+          {
+            cwd: SERVER_DIR,
+            shell: true,
+          }
+        );
+      } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
         );
