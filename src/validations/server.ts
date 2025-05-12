@@ -21,7 +21,7 @@ export default function validateServer(): iReturn {
     logger({
       context: "VALIDATION",
       message: `Servidor ou mundo não encontrado`,
-      type: "error",
+      type: "info",
     });
 
     return {};

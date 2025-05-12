@@ -8,6 +8,7 @@ import cleanServerDir from "./server/cleanServerDir";
 import copyBackupWorlds from "./backup/copy";
 import extract from "./download/extract";
 import { logger } from "./helpers/logger";
+import { ServerManager } from "./server/serverManager";
 
 export default async function updateMinecraftServer() {
   try {
@@ -24,6 +25,9 @@ export default async function updateMinecraftServer() {
 
       return;
     }
+
+    // Parar o servidor
+    await ServerManager.stop();
 
     // Instalar a versão mais recente do servidor
     const filePath = await downloadServer({ urlDownload, recentVersion });
@@ -46,8 +50,8 @@ export default async function updateMinecraftServer() {
       type: "success",
     });
 
-    // serverManager.start("a")
-
+    // Iniciar o servidor
+    await ServerManager.start();
   } catch (error) {
     logger({
       context: "APP",

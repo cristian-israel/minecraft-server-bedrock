@@ -41,7 +41,12 @@ export const ServerManager = {
           logStream.write(`${message}\n`);
 
           // Detecta que o servidor está pronto
-          if (!isReady && message.includes("======================================================")) {
+          if (
+            !isReady &&
+            message.includes(
+              "======================================================"
+            )
+          ) {
             isReady = true;
             logger({
               context: "SERVER",
@@ -107,16 +112,66 @@ export const ServerManager = {
     }
   },
 
-  stop() {
-    if (process) {
-      this.sendCommand("stop");
-    } else {
-      logger({
-        context: "SERVER",
-        message: "Servidor não está em execução.",
-        type: "info",
-      });
-    }
+  stop(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (!process || !isReady) {
+        logger({
+          context: "SERVER",
+          message: "Servidor não está em execução.",
+          type: "info",
+        });
+        return resolve();
+      }
+
+      try {
+        logger({
+          context: "SERVER",
+          message: "Comando de parada enviado ao servidor Minecraft.",
+          type: "info",
+        });
+
+        let buffer = "";
+
+        const onData = (data: Buffer) => {
+          const message = data.toString();
+          buffer += message;
+          logStream.write(message + "\n");
+
+          if (message.includes("Quit correctly")) {
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft encerrado corretamente.",
+              type: "info",
+            });
+
+            cleanup();
+            resolve();
+          }
+        };
+
+        const onExit = (code: number) => {
+          logStream.write(`Servidor encerrado com código ${code}\n`);
+          cleanup();
+          resolve();
+        };
+
+        const cleanup = () => {
+          if (process) {
+            process.stdout.off("data", onData);
+            process.off("exit", onExit);
+          }
+          process = null;
+          isReady = false;
+        };
+
+        process.stdout.on("data", onData);
+        process.once("exit", onExit);
+
+        this.sendCommand("stop");
+      } catch (err) {
+        reject(err);
+      }
+    });
   },
 
   isRunning() {
