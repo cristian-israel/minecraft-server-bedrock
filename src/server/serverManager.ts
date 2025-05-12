@@ -1,17 +1,27 @@
-// src/server/serverManager.ts
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { join } from "path";
+import { createWriteStream } from "fs"; // Importando o módulo fs
 import SystemInfo from "../helpers/system";
-import { SERVER_DIR } from "../helpers/paths";
+import { SERVER_DIR, CACHCE_DIR } from "../helpers/paths";
+import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
 
 let process: ChildProcessWithoutNullStreams | null = null;
 
+// Criando um fluxo de escrita para o arquivo de log
+const logStream = createWriteStream(join(CACHCE_DIR, "server.log"), {
+  flags: "a",
+});
+
 export const ServerManager = {
   start() {
     if (process) {
-      console.log("Servidor já está em execução.");
+      logger({
+        context: "SERVER",
+        message: "Servidor já está em execução.",
+        type: "info",
+      });
       return;
     }
 
@@ -22,26 +32,39 @@ export const ServerManager = {
       });
 
       process.stdout.on("data", (data) => {
-        console.log(`[BEDROCK] ${data.toString()}`);
+        // Escreve a saída no arquivo de log
+        logStream.write(`${data.toString()}\n`);
       });
 
       process.stderr.on("data", (data) => {
-        console.error(`[BEDROCK ERROR] ${data.toString()}`);
+        // Escreve os erros no arquivo de log
+        logStream.write(`${data.toString()}\n`);
       });
 
       process.on("exit", (code) => {
-        console.log(`Servidor encerrado com código ${code}`);
+        logStream.write(`Servidor encerrado com código ${code}\n`);
         process = null;
       });
 
-      console.log("Servidor Minecraft iniciado em background.");
-    } else {
+      logger({
+        context: "SERVER",
+        message: "Servidor Minecraft iniciado.",
+        type: "success",
+      });
+    } else if (systemType === "Linux") {
       spawn("screen", ["-dmS", "bedrock", "./bedrock_server"], {
         cwd: SERVER_DIR,
         shell: true,
         detached: true,
       });
-      console.log("Servidor Minecraft iniciado em modo screen.");
+
+      logger({
+        context: "SERVER",
+        message: "Servidor Minecraft iniciado.",
+        type: "success",
+      });
+    } else {
+      throw new Error("Sistema operacional não suportado.");
     }
   },
 
@@ -56,6 +79,12 @@ export const ServerManager = {
   stop() {
     if (process) {
       this.sendCommand("stop");
+    } else {
+      logger({
+        context: "SERVER",
+        message: "Servidor não está em execução.",
+        type: "info",
+      });
     }
   },
 

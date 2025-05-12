@@ -1,4 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
+import { logger } from "../helpers/logger";
 
 export default async function initBotTelegram(): Promise<{
   nome_bot: string;
@@ -12,7 +13,11 @@ export default async function initBotTelegram(): Promise<{
     );
 
     // Informe que o bot está ativo
-    console.log(`\nAssistente virtual ativo ✅\n`);
+    logger({
+      context: "TELEGRAM",
+      message: `Bot Telegram iniciado com sucesso.`,
+      type: "success",
+    });
 
     // Trate os erros de polling
     bot.on("polling_error", () => {
