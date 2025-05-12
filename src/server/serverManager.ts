@@ -256,10 +256,14 @@ export const ServerManager = {
         process.once("exit", onExit);
 
         // Enviar o comando "stop" via screen no Linux
-        spawn("screen", ["-S", "bedrock", "-p", "0", "-X", "stuff", "stop\n"], {
-          cwd: SERVER_DIR,
-          shell: true,
-        });
+        spawn(
+          "screen",
+          ["-S", nameScreen, "-p", "0", "-X", "stuff", "stop\n"],
+          {
+            cwd: SERVER_DIR,
+            shell: true,
+          }
+        );
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
