@@ -78,7 +78,7 @@ export const ServerManager = {
 
         logger({
           context: "SERVER",
-          message: "Servidor Minecraft iniciado.",
+          message: "Servidor Minecraft bedrock iniciado.",
           type: "success",
         });
       } else if (systemType === "Linux") {
@@ -136,12 +136,6 @@ export const ServerManager = {
         return resolve();
       }
 
-      logger({
-        context: "SERVER",
-        message: "Comando de parada enviado ao servidor Minecraft.",
-        type: "info",
-      });
-
       const onMessage = (message: string) => {
         if (message.includes("Quit correctly")) {
           logger({
@@ -157,7 +151,6 @@ export const ServerManager = {
       };
 
       const onExit = (code: number) => {
-        logStream.write(`Servidor encerrado com código ${code}\n`);
         stdoutListeners.delete(onMessage);
         cleanup();
         resolve();
