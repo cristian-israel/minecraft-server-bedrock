@@ -6,31 +6,31 @@ import { ServerManager } from "./server/serverManager";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
 
-import fs from "fs";
-
 dotenv.config();
 console.clear();
 
 (async () => {
   try {
-    await initBotTelegram();
-    await ServerManager.start();
+    ServerManager.updateVersion("0.0.1");
 
-    // cron.schedule("0 * * * *", async () => {
-    logger({
-      context: "APP",
-      message: `Executando rotina de atualização do servidor...`,
-      type: "info",
-    });
+    // await initBotTelegram();
+    // await ServerManager.start();
 
-    await updateMinecraftServer();
+    // // cron.schedule("0 * * * *", async () => {
+    // logger({
+    //   context: "APP",
+    //   message: `Executando rotina de atualização do servidor...`,
+    //   type: "info",
     // });
 
-    logger({
-      context: "APP",
-      message: `Sistema de atualização do servidor Bedrock iniciado`,
-      type: "success",
-    });
+    // await updateMinecraftServer();
+    // // });
+
+    // logger({
+    //   context: "APP",
+    //   message: `Sistema de atualização do servidor Bedrock iniciado`,
+    //   type: "success",
+    // });
   } catch (error) {
     logger({
       context: "APP",

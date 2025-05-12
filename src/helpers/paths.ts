@@ -23,18 +23,3 @@ export const CONFIG_SERVER_FILE = path.join(
   "server",
   "config.json"
 );
-
-// Garante que o diretório src/server existe
-const CONFIG_DIR = path.dirname(CONFIG_SERVER_FILE);
-if (!fs.existsSync(CONFIG_DIR)) {
-  fs.mkdirSync(CONFIG_DIR, { recursive: true });
-}
-
-// Cria o arquivo se não existir
-if (!fs.existsSync(CONFIG_SERVER_FILE)) {
-  fs.writeFileSync(
-    CONFIG_SERVER_FILE,
-    JSON.stringify({ version: "", updateDate: "" }, null, 2)
-  );
-  console.log("Arquivo config.json criado com sucesso.");
-}

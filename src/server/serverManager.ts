@@ -3,7 +3,7 @@ import { join } from "path";
 import { createWriteStream, writeFileSync } from "fs";
 
 import SystemInfo from "../helpers/system";
-import { SERVER_DIR, CACHE_DIR } from "../helpers/paths";
+import { SERVER_DIR, CACHE_DIR, CONFIG_SERVER_FILE } from "../helpers/paths";
 import configJson from "./config.json";
 import { logger } from "../helpers/logger";
 
@@ -192,6 +192,6 @@ export const ServerManager = {
       updateDate: new Date().toISOString(),
     };
 
-    writeFileSync("./config.json", JSON.stringify(data, null, 2));
+    writeFileSync(CONFIG_SERVER_FILE, JSON.stringify(data, null, 2));
   },
 };
