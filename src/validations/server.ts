@@ -20,10 +20,10 @@ export default function validateServer(): iReturn {
   const serverExists = fs.existsSync(serverPath);
   const worldExists = fs.existsSync(worldPath);
 
-  if (!serverExists || !worldExists) {
+  if (!serverExists) {
     logger({
       context: "VALIDATION",
-      message: `Servidor ou mundo não encontrado`,
+      message: `Servidor não encontrado`,
       type: "info",
     });
 
@@ -31,7 +31,7 @@ export default function validateServer(): iReturn {
   }
 
   return {
-    worldPath,
+    worldPath: worldExists ? worldPath : undefined,
     version: ServerManager.getVersion().version
   };
 }
