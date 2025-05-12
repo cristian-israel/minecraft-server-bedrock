@@ -1,6 +1,7 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
-import { join } from "path";
 import { createWriteStream, writeFileSync } from "fs";
+import { join } from "path";
+import moment from "moment";
 
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR, CACHE_DIR, CONFIG_SERVER_FILE } from "../helpers/paths";
@@ -189,7 +190,7 @@ export const ServerManager = {
   updateVersion(newVersion: string) {
     const data: configServerJson = {
       version: newVersion,
-      updateDate: new Date().toISOString(),
+      updateDate: moment().format("YYYY-MM-DD HH:mm:ss"),
     };
 
     writeFileSync(CONFIG_SERVER_FILE, JSON.stringify(data, null, 2));
