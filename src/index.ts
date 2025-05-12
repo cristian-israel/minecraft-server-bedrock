@@ -1,33 +1,44 @@
 import cron from "node-cron";
+import dotenv from "dotenv";
 
 import SystemInfo from "./helpers/system";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
 import { ServerManager } from "./server/serverManager";
+import initBotTelegram from "./telegram";
 
+dotenv.config();
 console.clear();
 
-const { systemType } = SystemInfo.getInstance();
+(async () => {
+  try {
+    const { systemType } = SystemInfo.getInstance();
 
-logger({
-  context: "APP",
-  message: `Sistema de atualização do servidor Bedrock iniciado, sistema operacional: ${systemType}`,
-  type: "success",
-});
+    await initBotTelegram();
 
-const server = new ServerManager();
+    ServerManager.start();
+    ServerManager.sendCommand("time set 0");
 
-server.start();
+    cron.schedule("0 * * * *", () => {
+      logger({
+        context: "APP",
+        message: `Executando rotina de atualização do servidor...`,
+        type: "info",
+      });
 
-server.sendCommand("time set 0");
+      updateMinecraftServer();
+    });
 
-// cron.schedule("0 * * * *", () => {
-
-// logger({
-//   context: "APP",
-//   message: `Executando rotina de atualização do servidor...`,
-//   type: "info",
-// });
-
-// updateMinecraftServer();
-// });
+    logger({
+      context: "APP",
+      message: `Sistema de atualização do servidor Bedrock iniciado, sistema operacional: ${systemType}`,
+      type: "success",
+    });
+  } catch (error) {
+    logger({
+      context: "APP",
+      message: `Erro ao iniciar o servidor: ${error}`,
+      type: "error",
+    });
+  }
+})();
