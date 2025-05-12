@@ -93,7 +93,6 @@ export const ServerManager = {
           type: "success",
         });
       } else if (systemType === "Linux") {
-        // Iniciar o servidor no Linux usando o comando `screen`
         process = spawn("screen", ["-dmS", nameScreen, "./bedrock_server"], {
           cwd: SERVER_DIR,
           shell: true,
