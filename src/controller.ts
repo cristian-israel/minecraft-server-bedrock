@@ -52,15 +52,7 @@ export default async function updateMinecraftServer() {
     });
 
     // Atualizar version de server.json
-    const data = {
-      version: recentVersion,
-      updateDate: new Date().toISOString(),
-    };
-
-    fs.writeFileSync(
-      "./server/config.json",
-      JSON.stringify({ version: "10" }, null, 2)
-    );
+    ServerManager.updateVersion(recentVersion);
 
     // Iniciar o servidor
     await ServerManager.start();
