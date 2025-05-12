@@ -95,21 +95,32 @@ export const ServerManager = {
     });
   },
 
-  sendCommand(command: string) {
-    if (!process || !isReady) {
-      throw new Error("Servidor ainda não está pronto para comandos.");
-    }
+  sendCommand(command: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (!process || !isReady) {
+        logger({
+          context: "SERVER",
+          message: "Servidor não está em execução.",
+          type: "info",
+        });
 
-    // Logando o comando enviado
-    const logCommand = `[SERVER] Comando enviado: ${command}\n`;
-    logStream.write(logCommand);
+        return resolve();
+      }
 
-    // Enviando o comando para o servidor
-    if (systemType === "Windows" && process) {
-      process.stdin.write(command + "\n");
-    } else {
-      throw new Error("Comando só disponível para instância ativa no Windows.");
-    }
+      // Enviando o comando para o servidor
+      if (systemType === "Windows" && process) {
+        // Logando o comando enviado
+        const logCommand = `[SERVER] Comando enviado: ${command}\n`;
+        logStream.write(logCommand);
+        process.stdin.write(command + "\n");
+
+        return resolve();
+      } else {
+        return reject(
+          new Error("Comando não suportado para o sistema operacional atual.")
+        );
+      }
+    });
   },
 
   stop(): Promise<void> {
@@ -120,6 +131,7 @@ export const ServerManager = {
           message: "Servidor não está em execução.",
           type: "info",
         });
+
         return resolve();
       }
 
