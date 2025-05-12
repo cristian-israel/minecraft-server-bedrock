@@ -15,7 +15,10 @@ logger({
   type: "success",
 });
 
-const serverManager = new ServerManager("minecraft-server");
+const server = new ServerManager();
+
+server.start();
+server.sendCommand("time set 0");
 
 // cron.schedule("0 * * * *", () => {
 

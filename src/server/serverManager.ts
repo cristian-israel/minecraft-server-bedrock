@@ -1,68 +1,79 @@
-import { spawn } from "child_process";
-
+import { spawn, ChildProcessWithoutNullStreams } from "child_process";
+import net from "net";
+import { join } from "path";
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR } from "../helpers/paths";
 
 const { systemType } = SystemInfo.getInstance();
 
 export class ServerManager {
-  private sessionName: string;
   private serverPath: string;
+  private process: ChildProcessWithoutNullStreams | null = null;
 
-  constructor(sessionName: string) {
-    this.sessionName = sessionName;
+  constructor() {
     this.serverPath = SERVER_DIR;
   }
 
-  async start(): Promise<void> {
-    if (systemType === "Linux") {
-      spawn("screen", ["-dmS", this.sessionName, "./bedrock_server"], {
+  start(): void {
+    if (systemType === "Windows") {
+      this.process = spawn(
+        join(this.serverPath, "bedrock_server.exe"),
+        [],
+        {
+          cwd: this.serverPath,
+          windowsHide: true,
+        }
+      );
+
+      this.process.stdout.on("data", (data) => {
+        console.log(`[BEDROCK] ${data.toString()}`);
+      });
+
+      this.process.stderr.on("data", (data) => {
+        console.error(`[BEDROCK ERROR] ${data.toString()}`);
+      });
+
+      this.process.on("exit", (code) => {
+        console.log(`Servidor encerrado com código ${code}`);
+        this.process = null;
+      });
+
+      console.log("Servidor Minecraft iniciado em background.");
+    } else {
+      // Linux: screen ou tmux
+      spawn("screen", ["-dmS", "bedrock", "./bedrock_server"], {
         cwd: this.serverPath,
         shell: true,
         detached: true,
       });
-    } else if (systemType === "Windows") {
-      spawn(
-        "powershell.exe",
-        [
-          "-Command",
-          `
-          Start-Process -FilePath "bedrock_server.exe" -WorkingDirectory "${this.serverPath}"
-        `,
-        ],
-        { shell: true }
-      );
+      console.log("Servidor Minecraft iniciado em modo screen.");
+    }
+  }
+
+  sendCommand(command: string): void {
+    if (systemType === "Windows" && this.process) {
+      this.process.stdin.write(command + "\n");
     } else {
-      throw new Error("Sistema não suportado");
+      throw new Error("Comando só disponível para instância ativa no Windows.");
     }
   }
 
-  async stop(): Promise<void> {
-    if (systemType === "Linux") {
-      spawn(
-        "screen",
-        ["-S", this.sessionName, "-X", "stuff", "stop$(printf \\r)"],
-        { shell: true }
-      );
-    } else if (systemType === "Windows") {
-      // Aqui, idealmente você salva o PID e dá Stop-Process no PID.
-      throw new Error("Implementar parada segura no Windows");
+  stop(): void {
+    if (this.process) {
+      this.sendCommand("stop");
     }
   }
 
-  async isRunning(): Promise<boolean> {
-    if (systemType === "Linux") {
-      return new Promise((resolve) => {
-        const proc = spawn("screen", ["-ls"], { shell: true });
-        let output = "";
-        proc.stdout.on("data", (data) => (output += data.toString()));
-        proc.on("close", () => {
-          resolve(output.includes(this.sessionName));
-        });
-      });
-    }
-
-    // Para Windows, você precisará verificar se o processo está rodando por PID ou nome.
-    return false;
+  portInUse(port: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const tester = net
+        .createServer()
+        .once("error", () => resolve(true))
+        .once("listening", function () {
+          tester.close();
+          resolve(false);
+        })
+        .listen(port);
+    });
   }
 }
