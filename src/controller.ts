@@ -23,7 +23,7 @@ export default async function updateMinecraftServer() {
         type: "info",
       });
 
-      return;
+      return await ServerManager.start();
     }
 
     ServerManager.setUpdating(true);
@@ -53,7 +53,7 @@ export default async function updateMinecraftServer() {
     });
 
     // Atualizar estado de execução do servidor
-    ServerManager.setUpdating(true);
+    ServerManager.setUpdating(false);
 
     // Atualizar version de server.json
     ServerManager.updateVersion(recentVersion);

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import initBotTelegram from "./telegram";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
+import { ServerManager } from "./server/serverManager";
 
 dotenv.config();
 console.clear();
