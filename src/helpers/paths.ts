@@ -17,9 +17,12 @@ if (!fs.existsSync(SERVER_DIR)) {
 }
 
 // Caminho para o arquivo de configuração
-export const CONFIG_SERVER_FILE = path.join(
-  PROJECT_DIR,
-  "src",
-  "server",
-  "config.json"
-);
+export const CONFIG_SERVER_FILE = path.join(CACHE_DIR, "config.json");
+
+// Criar o arquivo de configuração se não existir
+if (!fs.existsSync(CONFIG_SERVER_FILE)) {
+  fs.writeFileSync(
+    CONFIG_SERVER_FILE,
+    JSON.stringify({ version: "", updateDate: "" })
+  );
+}

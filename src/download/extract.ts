@@ -8,7 +8,10 @@ interface ExtractProps {
   serverDir: string;
 }
 
-export default function extractZip({ filePath, serverDir }: ExtractProps): void {
+export default function extractZip({
+  filePath,
+  serverDir,
+}: ExtractProps): void {
   try {
     if (!fs.existsSync(filePath)) {
       throw new Error(`Arquivo ZIP não encontrado: ${filePath}`);
@@ -19,7 +22,7 @@ export default function extractZip({ filePath, serverDir }: ExtractProps): void 
 
     logger({
       context: "DOWNLOAD",
-      message: `Servidor extraído com sucesso para ${serverDir}`,
+      message: `Servidor extraído com sucesso`,
       type: "success",
     });
 
