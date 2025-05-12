@@ -16,14 +16,10 @@ export class ServerManager {
 
   start(): void {
     if (systemType === "Windows") {
-      this.process = spawn(
-        join(this.serverPath, "bedrock_server.exe"),
-        [],
-        {
-          cwd: this.serverPath,
-          windowsHide: true,
-        }
-      );
+      this.process = spawn(join(this.serverPath, "bedrock_server.exe"), [], {
+        cwd: this.serverPath,
+        windowsHide: true,
+      });
 
       this.process.stdout.on("data", (data) => {
         console.log(`[BEDROCK] ${data.toString()}`);
@@ -62,18 +58,5 @@ export class ServerManager {
     if (this.process) {
       this.sendCommand("stop");
     }
-  }
-
-  portInUse(port: number): Promise<boolean> {
-    return new Promise((resolve) => {
-      const tester = net
-        .createServer()
-        .once("error", () => resolve(true))
-        .once("listening", function () {
-          tester.close();
-          resolve(false);
-        })
-        .listen(port);
-    });
   }
 }
