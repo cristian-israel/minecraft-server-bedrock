@@ -32,6 +32,9 @@ if (!fs.existsSync(CONFIG_DIR)) {
 
 // Cria o arquivo se não existir
 if (!fs.existsSync(CONFIG_SERVER_FILE)) {
-  fs.writeFileSync(CONFIG_SERVER_FILE, JSON.stringify({}, null, 2));
+  fs.writeFileSync(
+    CONFIG_SERVER_FILE,
+    JSON.stringify({ version: "", updateDate: "" }, null, 2)
+  );
   console.log("Arquivo config.json criado com sucesso.");
 }
