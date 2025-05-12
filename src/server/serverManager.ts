@@ -71,8 +71,7 @@ export const ServerManager = {
           logStream.write(`[ERROR] ${message}\n`);
         });
 
-        process.on("exit", (code) => {
-          logStream.write(`Servidor encerrado com código ${code}\n`);
+        process.on("exit", () => {
           process = null;
           isReady = false;
         });
@@ -193,6 +192,6 @@ export const ServerManager = {
       updateDate: new Date().toISOString(),
     };
 
-    writeFileSync("./server/config.json", JSON.stringify(data, null, 2));
+    writeFileSync("./config.json", JSON.stringify(data, null, 2));
   },
 };
