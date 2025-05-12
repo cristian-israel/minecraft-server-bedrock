@@ -10,6 +10,11 @@ let process: ChildProcessWithoutNullStreams | null = null;
 
 export const ServerManager = {
   start() {
+    if (process) {
+      console.log("Servidor já está em execução.");
+      return;
+    }
+
     if (systemType === "Windows") {
       process = spawn(join(SERVER_DIR, "bedrock_server.exe"), [], {
         cwd: SERVER_DIR,
@@ -56,5 +61,5 @@ export const ServerManager = {
 
   isRunning() {
     return !!process;
-  }
+  },
 };

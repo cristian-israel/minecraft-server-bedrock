@@ -17,7 +17,8 @@ console.clear();
     await initBotTelegram();
 
     ServerManager.start();
-    ServerManager.sendCommand("time set 0");
+    // ServerManager.start();
+    // ServerManager.sendCommand("time set 0");
 
     cron.schedule("0 * * * *", () => {
       logger({
