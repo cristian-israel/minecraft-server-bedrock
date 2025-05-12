@@ -4,6 +4,9 @@ import path from "path";
 import { SERVER_DIR } from "../helpers/paths";
 import { logger } from "../helpers/logger";
 import { ServerManager } from "../server/serverManager";
+import SystemInfo from "../helpers/system";
+
+const { systemType } = SystemInfo.getInstance();
 
 interface iReturn {
   worldPath?: string;
@@ -11,7 +14,7 @@ interface iReturn {
 }
 
 export default function validateServer(): iReturn {
-  const serverPath = path.join(SERVER_DIR, "bedrock_server.exe");
+  const serverPath = path.join(SERVER_DIR, systemType === "Windows" ? "bedrock_server.exe" : "bedrock_server");
   const worldPath = path.join(SERVER_DIR, "worlds");
 
   const serverExists = fs.existsSync(serverPath);
@@ -29,6 +32,6 @@ export default function validateServer(): iReturn {
 
   return {
     worldPath,
-    version: ServerManager.getVersion().version || undefined,
+    version: ServerManager.getVersion().version
   };
 }
