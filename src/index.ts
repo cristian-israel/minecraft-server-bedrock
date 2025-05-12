@@ -16,6 +16,10 @@ console.clear();
     ServerManager.start();
     ServerManager.sendCommand("time set 0");
 
+    setTimeout(() => {
+      ServerManager.sendCommand("time set 10000");
+    }, 10000);
+
     cron.schedule("0 * * * *", () => {
       logger({
         context: "APP",
