@@ -1,5 +1,7 @@
-import { SERVER_DIR } from "./helpers/paths";
+import fs from "fs";
 
+import { SERVER_DIR } from "./helpers/paths";
+import { ServerManager } from "./server/serverManager";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
 import createBackupWorlds from "./backup/create";
@@ -8,7 +10,6 @@ import cleanServerDir from "./server/cleanServerDir";
 import copyBackupWorlds from "./backup/copy";
 import extract from "./download/extract";
 import { logger } from "./helpers/logger";
-import { ServerManager } from "./server/serverManager";
 
 export default async function updateMinecraftServer() {
   try {
@@ -49,6 +50,17 @@ export default async function updateMinecraftServer() {
       message: `Servidor atualizado para a versão mais recente: ${recentVersion}`,
       type: "success",
     });
+
+    // Atualizar version de server.json
+    const data = {
+      version: recentVersion,
+      updateDate: new Date().toISOString(),
+    };
+
+    fs.writeFileSync(
+      "./server/config.json",
+      JSON.stringify({ version: "10" }, null, 2)
+    );
 
     // Iniciar o servidor
     await ServerManager.start();

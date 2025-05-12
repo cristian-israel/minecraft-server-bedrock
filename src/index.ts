@@ -6,13 +6,14 @@ import { ServerManager } from "./server/serverManager";
 import updateMinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
 
+import fs from "fs";
+
 dotenv.config();
 console.clear();
 
 (async () => {
   try {
     await initBotTelegram();
-
     await ServerManager.start();
 
     // cron.schedule("0 * * * *", async () => {

@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 
 import { SERVER_DIR } from "../helpers/paths";
-import { version } from "../config/server.json";
 import { logger } from "../helpers/logger";
+import { ServerManager } from "../server/serverManager";
 
 interface iReturn {
   worldPath?: string;
@@ -29,6 +29,6 @@ export default function validateServer(): iReturn {
 
   return {
     worldPath,
-    version: version || undefined,
+    version: ServerManager.getVersion().version || undefined,
   };
 }

@@ -7,3 +7,6 @@ Sistema automatizado para gerenciar servidores Minecraft Bedrock em ambientes **
 - ⬇️ Download da versão mais recente
 - 🛠️ Extração e substituição dos arquivos do servidor
 - 🔁 Reinício automático do servidor após atualização
+
+
+	"playerAdmin": "israel3576"

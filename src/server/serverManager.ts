@@ -1,9 +1,10 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { join } from "path";
-import { createWriteStream } from "fs";
+import { createWriteStream, writeFileSync } from "fs";
 
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR, CACHCE_DIR } from "../helpers/paths";
+import configJson from "./config.json";
 import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
@@ -14,6 +15,11 @@ let isReady = false;
 const logStream = createWriteStream(join(CACHCE_DIR, "server.log"), {
   flags: "a",
 });
+
+type configServerJson = {
+  version: string;
+  updateDate: string;
+};
 
 // Lista de funções que reagem a cada nova linha do stdout
 const stdoutListeners = new Set<(message: string) => void>();
@@ -43,7 +49,9 @@ export const ServerManager = {
           // Detecta servidor pronto
           if (
             !isReady &&
-            message.includes("======================================================")
+            message.includes(
+              "======================================================"
+            )
           ) {
             isReady = true;
             logger({
@@ -173,5 +181,18 @@ export const ServerManager = {
 
   isRunning() {
     return !!process;
+  },
+
+  getVersion(): configServerJson {
+    return configJson;
+  },
+
+  updateVersion(newVersion: string) {
+    const data: configServerJson = {
+      version: newVersion,
+      updateDate: new Date().toISOString(),
+    };
+
+    writeFileSync("./server/config.json", JSON.stringify(data, null, 2));
   },
 };
