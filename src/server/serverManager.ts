@@ -11,13 +11,14 @@ const { systemType } = SystemInfo.getInstance();
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
 
-// Criando um fluxo de escrita para o arquivo de log
 const logStream = createWriteStream(join(CACHCE_DIR, "server.log"), {
   flags: "a",
 });
 
+// Lista de funções que reagem a cada nova linha do stdout
+const stdoutListeners = new Set<(message: string) => void>();
+
 export const ServerManager = {
-  // Torna a função start assíncrona
   start(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (process) {
@@ -26,7 +27,7 @@ export const ServerManager = {
           message: "Servidor já está em execução.",
           type: "info",
         });
-        return resolve(); // O servidor já está em execução, então resolve imediatamente.
+        return resolve();
       }
 
       if (systemType === "Windows") {
@@ -35,17 +36,14 @@ export const ServerManager = {
           windowsHide: true,
         });
 
-        // Redirecionando a saída padrão e de erro para o arquivo de log
         process.stdout.on("data", (data) => {
-          const message = data.toString();
+          const message = data.toString().trim();
           logStream.write(`${message}\n`);
 
-          // Detecta que o servidor está pronto
+          // Detecta servidor pronto
           if (
             !isReady &&
-            message.includes(
-              "======================================================"
-            )
+            message.includes("======================================================")
           ) {
             isReady = true;
             logger({
@@ -53,17 +51,18 @@ export const ServerManager = {
               message: "Servidor Minecraft está pronto para comandos.",
               type: "info",
             });
-            resolve(); // Resolve a Promise quando o servidor estiver pronto
+            resolve();
           }
+
+          // Notifica ouvintes
+          stdoutListeners.forEach((callback) => callback(message));
         });
 
-        // Redirecionando a saída de erro para o arquivo de log
         process.stderr.on("data", (data) => {
           const message = data.toString();
           logStream.write(`[ERROR] ${message}\n`);
         });
 
-        // Tratando o evento de erro
         process.on("exit", (code) => {
           logStream.write(`Servidor encerrado com código ${code}\n`);
           process = null;
@@ -103,17 +102,13 @@ export const ServerManager = {
           message: "Servidor não está em execução.",
           type: "info",
         });
-
         return resolve();
       }
 
-      // Enviando o comando para o servidor
       if (systemType === "Windows" && process) {
-        // Logando o comando enviado
-        const logCommand = `[SERVER] Comando enviado: ${command}\n`;
+        const logCommand = `\n[SERVER] Comando enviado: ${command}\n`;
         logStream.write(logCommand);
         process.stdin.write(command + "\n");
-
         return resolve();
       } else {
         return reject(
@@ -131,58 +126,48 @@ export const ServerManager = {
           message: "Servidor não está em execução.",
           type: "info",
         });
-
         return resolve();
       }
 
-      try {
-        logger({
-          context: "SERVER",
-          message: "Comando de parada enviado ao servidor Minecraft.",
-          type: "info",
-        });
+      logger({
+        context: "SERVER",
+        message: "Comando de parada enviado ao servidor Minecraft.",
+        type: "info",
+      });
 
-        let buffer = "";
+      const onMessage = (message: string) => {
+        if (message.includes("Quit correctly")) {
+          logger({
+            context: "SERVER",
+            message: "Servidor Minecraft encerrado corretamente.",
+            type: "info",
+          });
 
-        const onData = (data: Buffer) => {
-          const message = data.toString();
-          buffer += message;
-          logStream.write(message + "\n");
-
-          if (message.includes("Quit correctly")) {
-            logger({
-              context: "SERVER",
-              message: "Servidor Minecraft encerrado corretamente.",
-              type: "info",
-            });
-
-            cleanup();
-            resolve();
-          }
-        };
-
-        const onExit = (code: number) => {
-          logStream.write(`Servidor encerrado com código ${code}\n`);
+          stdoutListeners.delete(onMessage);
           cleanup();
           resolve();
-        };
+        }
+      };
 
-        const cleanup = () => {
-          if (process) {
-            process.stdout.off("data", onData);
-            process.off("exit", onExit);
-          }
-          process = null;
-          isReady = false;
-        };
+      const onExit = (code: number) => {
+        logStream.write(`Servidor encerrado com código ${code}\n`);
+        stdoutListeners.delete(onMessage);
+        cleanup();
+        resolve();
+      };
 
-        process.stdout.on("data", onData);
-        process.once("exit", onExit);
+      const cleanup = () => {
+        if (process) {
+          process.off("exit", onExit);
+        }
+        process = null;
+        isReady = false;
+      };
 
-        this.sendCommand("stop");
-      } catch (err) {
-        reject(err);
-      }
+      stdoutListeners.add(onMessage);
+      process.once("exit", onExit);
+
+      this.sendCommand("stop");
     });
   },
 
