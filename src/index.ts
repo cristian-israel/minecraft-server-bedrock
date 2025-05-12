@@ -13,7 +13,7 @@ console.clear();
   try {
     await initBotTelegram();
 
-    ServerManager.start();
+    await ServerManager.start();
     ServerManager.sendCommand("time set 0");
 
     setTimeout(() => {
