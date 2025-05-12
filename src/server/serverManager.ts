@@ -1,11 +1,10 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
-import { createWriteStream, writeFileSync } from "fs";
+import { createWriteStream, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import moment from "moment";
 
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR, CACHE_DIR, CONFIG_SERVER_FILE } from "../helpers/paths";
-import configJson from "./config.json";
 import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
@@ -184,7 +183,20 @@ export const ServerManager = {
   },
 
   getVersion(): configServerJson {
-    return configJson;
+    try {
+      const data = JSON.parse(
+        readFileSync(CONFIG_SERVER_FILE, "utf-8")
+      ) as configServerJson;
+
+      return data;
+    } catch (error) {
+      logger({
+        context: "SERVER",
+        message: `Erro ao ler o arquivo de configuração: ${error}`,
+        type: "error",
+      });
+      return { version: "", updateDate: "" };
+    }
   },
 
   updateVersion(newVersion: string) {

@@ -11,7 +11,7 @@ console.clear();
 
 (async () => {
   try {
-    ServerManager.updateVersion("0.0.1");
+    console.log(ServerManager.getVersion())
 
     // await initBotTelegram();
     // await ServerManager.start();
