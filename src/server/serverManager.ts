@@ -11,6 +11,7 @@ const { systemType } = SystemInfo.getInstance();
 
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
+let updating = false;
 
 const logStream = createWriteStream(join(CACHE_DIR, "server.log"), {
   flags: "a",
@@ -171,8 +172,16 @@ export const ServerManager = {
     });
   },
 
-  isRunning() {
+  getRunning(): boolean {
     return !!process;
+  },
+
+  getUpdating(): boolean {
+    return updating;
+  },
+
+  setUpdating(value: boolean) {
+    updating = value;
   },
 
   getVersion(): configServerJson {

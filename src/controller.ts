@@ -28,7 +28,7 @@ export default async function updateMinecraftServer() {
     }
 
     // Parar o servidor
-    if (ServerManager.isRunning()) await ServerManager.stop();
+    if (ServerManager.getRunning()) await ServerManager.stop();
 
     // Instalar a versão mais recente do servidor
     const filePath = await downloadServer({ urlDownload, recentVersion });
