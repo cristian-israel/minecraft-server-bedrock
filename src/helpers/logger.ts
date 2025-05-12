@@ -2,6 +2,7 @@ type LogContext =
   | "APP"
   | "DOWNLOAD"
   | "BACKUP"
+  | "PERMISSIONS"
   | "SERVER"
   | "TELEGRAM"
   | "VALIDATION";
