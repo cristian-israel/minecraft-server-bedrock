@@ -31,16 +31,17 @@ export const ServerManager = {
         windowsHide: true,
       });
 
+      // Redirecionando a saída padrão e de erro para o arquivo de log
       process.stdout.on("data", (data) => {
-        // Escreve a saída no arquivo de log
         logStream.write(`${data.toString()}\n`);
       });
 
+      // Redirecionando a saída de erro para o arquivo de log
       process.stderr.on("data", (data) => {
-        // Escreve os erros no arquivo de log
         logStream.write(`${data.toString()}\n`);
       });
 
+      // Tratando o evento de erro
       process.on("exit", (code) => {
         logStream.write(`Servidor encerrado com código ${code}\n`);
         process = null;
