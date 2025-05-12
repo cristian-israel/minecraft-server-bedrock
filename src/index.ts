@@ -8,33 +8,39 @@ import { logger } from "./helpers/logger";
 dotenv.config();
 console.clear();
 
-(async () => {
-  try {
-    await initBotTelegram();
-    await updateMinecraftServer();
+import { SERVER_DIR, CACHE_DIR, CONFIG_SERVER_FILE } from "./helpers/paths";
 
-    cron.schedule("0 * * * *", async () => {
-      logger({
-        context: "APP",
-        message: `Executando rotina de atualização do servidor...`,
-        type: "info",
-      });
+console.log(SERVER_DIR);
+console.log(CACHE_DIR);
+console.log(CONFIG_SERVER_FILE);
 
-      await updateMinecraftServer();
-    });
+// (async () => {
+//   try {
+//     await initBotTelegram();
+//     await updateMinecraftServer();
 
-    logger({
-      context: "APP",
-      message: `Sistema de atualização do servidor Bedrock iniciado`,
-      type: "success",
-    });
-  } catch (error) {
-    logger({
-      context: "APP",
-      message: `Erro ao iniciar o servidor: ${error}`,
-      type: "error",
-    });
+//     cron.schedule("0 * * * *", async () => {
+//       logger({
+//         context: "APP",
+//         message: `Executando rotina de atualização do servidor...`,
+//         type: "info",
+//       });
 
-    process.exit(1);
-  }
-})();
+//       await updateMinecraftServer();
+//     });
+
+//     logger({
+//       context: "APP",
+//       message: `Sistema de atualização do servidor Bedrock iniciado`,
+//       type: "success",
+//     });
+//   } catch (error) {
+//     logger({
+//       context: "APP",
+//       message: `Erro ao iniciar o servidor: ${error}`,
+//       type: "error",
+//     });
+
+//     process.exit(1);
+//   }
+// })();
