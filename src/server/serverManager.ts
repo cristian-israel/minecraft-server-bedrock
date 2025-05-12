@@ -1,7 +1,6 @@
 import { spawn, ChildProcessWithoutNullStreams } from "child_process";
 import { join } from "path";
 import { createWriteStream } from "fs";
-import moment from "moment";
 
 import SystemInfo from "../helpers/system";
 import { SERVER_DIR, CACHCE_DIR } from "../helpers/paths";
@@ -35,27 +34,17 @@ export const ServerManager = {
 
       // Redirecionando a saída padrão e de erro para o arquivo de log
       process.stdout.on("data", (data) => {
-        const message = data.toString();
-        logStream.write(
-          `${moment().format("YYYY-MM-DD HH:mm:ss")} - ${message}\n`
-        );
+        logStream.write(`${data.toString()}\n`);
       });
 
       // Redirecionando a saída de erro para o arquivo de log
       process.stderr.on("data", (data) => {
-        const message = data.toString();
-        logStream.write(
-          `${moment().format("YYYY-MM-DD HH:mm:ss")} - ${message}\n`
-        );
+        logStream.write(`${data.toString()}\n`);
       });
 
       // Tratando o evento de erro
       process.on("exit", (code) => {
-        logStream.write(
-          `${moment().format(
-            "YYYY-MM-DD HH:mm:ss"
-          )} - Servidor encerrado com código ${code}\n`
-        );
+        logStream.write(`Servidor encerrado com código ${code}\n`);
         process = null;
       });
 
