@@ -11,26 +11,24 @@ console.clear();
 
 (async () => {
   try {
-    console.log(ServerManager.getVersion())
+    await initBotTelegram();
+    await ServerManager.start();
 
-    // await initBotTelegram();
-    // await ServerManager.start();
+    // cron.schedule("0 * * * *", async () => {
+    logger({
+      context: "APP",
+      message: `Executando rotina de atualização do servidor...`,
+      type: "info",
+    });
 
-    // // cron.schedule("0 * * * *", async () => {
-    // logger({
-    //   context: "APP",
-    //   message: `Executando rotina de atualização do servidor...`,
-    //   type: "info",
+    await updateMinecraftServer();
     // });
 
-    // await updateMinecraftServer();
-    // // });
-
-    // logger({
-    //   context: "APP",
-    //   message: `Sistema de atualização do servidor Bedrock iniciado`,
-    //   type: "success",
-    // });
+    logger({
+      context: "APP",
+      message: `Sistema de atualização do servidor Bedrock iniciado`,
+      type: "success",
+    });
   } catch (error) {
     logger({
       context: "APP",
