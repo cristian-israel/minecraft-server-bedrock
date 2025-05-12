@@ -92,19 +92,51 @@ export const ServerManager = {
           type: "success",
         });
       } else if (systemType === "Linux") {
-        spawn("screen", ["-dmS", "bedrock", "./bedrock_server"], {
+        // Iniciar o servidor no Linux usando o comando `screen`
+        process = spawn("screen", ["-dmS", "bedrock", "./bedrock_server"], {
           cwd: SERVER_DIR,
           shell: true,
-          detached: true,
+        });
+
+        process.stdout.on("data", (data) => {
+          const message = data.toString().trim();
+          logStream.write(`${message}\n`);
+
+          // Detecta servidor pronto
+          if (
+            !isReady &&
+            message.includes(
+              "======================================================"
+            )
+          ) {
+            isReady = true;
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft está pronto para comandos.",
+              type: "info",
+            });
+            resolve();
+          }
+
+          // Notifica ouvintes
+          stdoutListeners.forEach((callback) => callback(message));
+        });
+
+        process.stderr.on("data", (data) => {
+          const message = data.toString();
+          logStream.write(`[ERROR] ${message}\n`);
+        });
+
+        process.on("exit", () => {
+          process = null;
+          isReady = false;
         });
 
         logger({
           context: "SERVER",
-          message: "Servidor Minecraft iniciado.",
+          message: "Servidor Minecraft iniciado no Linux.",
           type: "success",
         });
-
-        resolve();
       } else {
         reject(new Error("Sistema operacional não suportado."));
       }
@@ -128,7 +160,14 @@ export const ServerManager = {
         process.stdin.write(command + "\n");
         return resolve();
       } else if (systemType === "Linux") {
-        // DESENVOLVIMENTO
+        // Enviar o comando para o servidor via screen no Linux
+        const logCommand = `\n[SERVER] Comando enviado: ${command}\n`;
+        logStream.write(logCommand);
+        spawn("screen", ["-S", "bedrock", "-p", "0", "-X", "stuff", `${command}\n`], {
+          cwd: SERVER_DIR,
+          shell: true,
+        });
+        return resolve();
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
@@ -183,7 +222,40 @@ export const ServerManager = {
 
         this.sendCommand("stop");
       } else if (systemType === "Linux") {
-        // DESENVOLVIMENTO
+        // Enviar o comando "stop" para o servidor no Linux
+        const onMessage = (message: string) => {
+          if (message.includes("Quit correctly")) {
+            logger({
+              context: "SERVER",
+              message: "Servidor Minecraft encerrado corretamente no Linux.",
+              type: "info",
+            });
+
+            stdoutListeners.delete(onMessage);
+            cleanup();
+            resolve();
+          }
+        };
+
+        const onExit = () => {
+          stdoutListeners.delete(onMessage);
+          cleanup();
+          resolve();
+        };
+
+        const cleanup = () => {
+          process = null;
+          isReady = false;
+        };
+
+        stdoutListeners.add(onMessage);
+        process.once("exit", onExit);
+
+        // Enviar o comando "stop" via screen no Linux
+        spawn("screen", ["-S", "bedrock", "-p", "0", "-X", "stuff", "stop\n"], {
+          cwd: SERVER_DIR,
+          shell: true,
+        });
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
