@@ -1,7 +1,7 @@
 import { platform } from "os";
 import { chmodSync } from "fs";
 import { join } from "path";
-import { SERVER_DIR } from "./paths"; // ajuste o caminho se necessário
+import { SERVER_DIR } from "./paths";
 import { logger } from "./logger";
 
 export type SystemTypes = "Windows" | "Linux";

@@ -9,7 +9,6 @@ import { logger } from "../helpers/logger";
 
 const { systemType } = SystemInfo.getInstance();
 
-const nameScreen = "minecraft_server_bedrock";
 let process: ChildProcessWithoutNullStreams | null = null;
 let isReady = false;
 let updating = false;

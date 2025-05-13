@@ -9,32 +9,32 @@ dotenv.config();
 console.clear();
 
 (async () => {
-	try {		 
-     await initBotTelegram();
-     await MinecraftServer();
+  try {
+    await initBotTelegram();
+    await MinecraftServer();
 
-     cron.schedule("0 * * * *", async () => {
-       logger({
-         context: "APP",
-         message: `Executando rotina de atualização do servidor...`,
-         type: "info",
-       });
+    cron.schedule("0 * * * *", async () => {
+      logger({
+        context: "APP",
+        message: `Executando rotina de atualização do servidor...`,
+        type: "info",
+      });
 
-       await MinecraftServer();
-     });
+      await MinecraftServer();
+    });
 
-     logger({
-       context: "APP",
-       message: `Sistema de atualização do servidor Bedrock iniciado`,
-       type: "success",
-     });
-   } catch (error) {
-     logger({
-       context: "APP",
-       message: `Erro ao iniciar o servidor: ${error}`,
-       type: "error",
-     });
+    logger({
+      context: "APP",
+      message: `Sistema de atualização do servidor Bedrock iniciado`,
+      type: "success",
+    });
+  } catch (error) {
+    logger({
+      context: "APP",
+      message: `Erro ao iniciar o servidor: ${error}`,
+      type: "error",
+    });
 
-     process.exit(1);
-   }
- })();
+    process.exit(1);
+  }
+})();
