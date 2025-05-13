@@ -8,8 +8,6 @@ import { logger } from "./helpers/logger";
 dotenv.config();
 console.clear();
 
-
-
 (async () => {
 	try {		 
      await initBotTelegram();
