@@ -27,52 +27,67 @@ export default async function initBotTelegram(): Promise<void> {
 
     // Escutar mensagens de texto
     bot.on("text", async (msg) => {
-      const userId = msg.chat.id;
-      const text = msg.text;
-      const firstName = msg.from?.first_name ?? "Usuário";
+      try {
+        const userId = msg.chat.id;
+        const text = msg.text;
+        const firstName = msg.from?.first_name ?? "Usuário";
 
-      if (userId !== chatId) {
-        return bot.sendMessage(
-          userId,
-          "Você não tem permissão para usar este bot. Entre em contato com o administrador."
-        );
-      }
+        if (userId !== chatId) {
+          return bot.sendMessage(
+            userId,
+            "Você não tem permissão para usar este bot. Entre em contato com o administrador."
+          );
+        }
 
-      if (!text) return;
+        if (!text) return;
 
-      // Comandos administrativos
-      if (text === "/startServer") {
-        await ServerManager.start();
+        // Comandos administrativos
+        if (text === "/startServer") {
+          await ServerManager.start();
+          return bot.sendMessage(
+            chatId,
+            "Servidor iniciado (ou já estava em execução)."
+          );
+        }
+
+        // Comando para pausar o servidor
+        if (text === "/stopServer") {
+          await ServerManager.stop();
+          return bot.sendMessage(
+            chatId,
+            "Servidor encerrado (ou já estava parado)."
+          );
+        }
+
+        // Verifica se o servidor está em execução
+        if (!ServerManager.getRunning()) {
+          return bot.sendMessage(chatId, "Servidor não está em execução.");
+        }
+
+        // Verifica se o servidor está em atualização
+        if (ServerManager.getUpdating()) {
+          return bot.sendMessage(chatId, "Servidor está em atualização.");
+        }
+
+        // Envia comando genérico
+        await ServerManager.sendCommand(text);
+
         return bot.sendMessage(
           chatId,
-          "Servidor iniciado (ou já estava em execução)."
+          `${firstName}, seu comando foi enviado com sucesso! 🚀\n\nComando: \`${text}\`\n(Agora se funcionou ou não, já é outra história 😅)`
         );
-      }
+      } catch (error) {
+        logger({
+          context: "TELEGRAM",
+          message: `Erro ao processar mensagem: ${error}`,
+          type: "error",
+        });
 
-      if (text === "/stopServer") {
-        await ServerManager.stop();
         return bot.sendMessage(
           chatId,
-          "Servidor encerrado (ou já estava parado)."
+          `Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente mais tarde.`
         );
       }
-
-      // Validações antes de executar comandos genéricos
-      if (!ServerManager.getRunning()) {
-        return bot.sendMessage(chatId, "Servidor não está em execução.");
-      }
-
-      if (ServerManager.getUpdating()) {
-        return bot.sendMessage(chatId, "Servidor está em atualização.");
-      }
-
-      // Envia comando genérico
-      await ServerManager.sendCommand(text);
-
-      return bot.sendMessage(
-        chatId,
-        `${firstName}, seu comando foi enviado com sucesso! 🚀\n\nComando: \`${text}\`\n(Agora se funcionou ou não, já é outra história 😅)`
-      );
     });
   } catch (error) {
     console.error("Erro ao iniciar o bot:", error);
