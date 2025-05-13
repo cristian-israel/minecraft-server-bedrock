@@ -1,3 +1,5 @@
+import TelegramBot from "node-telegram-bot-api";
+
 import { logger } from "../../helpers/logger";
 import { ServerManager } from "../../server/serverManager";
 
@@ -18,7 +20,7 @@ const forbiddenCommands = [
   "net start", // Windows
 ];
 
-export function receiveMessage(bot: any, chatId: number): void {
+export function receiveMessage(bot: TelegramBot, chatId: number): void {
   try {
     bot.on("text", async (msg: any) => {
       const userId = msg.chat.id;
@@ -36,7 +38,14 @@ export function receiveMessage(bot: any, chatId: number): void {
 
       // Comandos administrativos
       if (text === "/startServer") {
+        logger({
+          context: "TELEGRAM",
+          message: `Iniciando o servidor...`,
+          type: "info",
+        });
+
         await ServerManager.start();
+
         return bot.sendMessage(
           chatId,
           "Servidor iniciado (ou já estava em execução)."
@@ -44,7 +53,14 @@ export function receiveMessage(bot: any, chatId: number): void {
       }
 
       if (text === "/stopServer") {
+        logger({
+          context: "TELEGRAM",
+          message: `Parando o servidor...`,
+          type: "info",
+        });
+
         await ServerManager.stop();
+
         return bot.sendMessage(
           chatId,
           "Servidor encerrado (ou já estava parado)."
@@ -75,9 +91,18 @@ export function receiveMessage(bot: any, chatId: number): void {
       // Comando permitido: envia ao servidor Minecraft
       await ServerManager.sendCommand(text);
 
+      logger({
+        context: "TELEGRAM",
+        message: `Comando enviado pelo Telegram: ${text}`,
+        type: "info",
+      });
+
       return bot.sendMessage(
         chatId,
-        `${firstName}, seu comando foi enviado com sucesso! 🚀\n\nComando: \`${text}\``
+        `${firstName}, seu comando foi enviado com sucesso! 🚀\n\nComando: \`${text}\``,
+        {
+          parse_mode: "Markdown",
+        }
       );
     });
   } catch (error) {
@@ -87,7 +112,7 @@ export function receiveMessage(bot: any, chatId: number): void {
       type: "error",
     });
 
-    return bot.sendMessage(
+    bot.sendMessage(
       chatId,
       `Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente mais tarde.`
     );
