@@ -29,8 +29,6 @@ console.clear();
       message: `Sistema de atualização do servidor Bedrock iniciado`,
       type: "success",
     });
-
-    await ServerManager.stop()
   } catch (error) {
     logger({
       context: "APP",
