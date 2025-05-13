@@ -26,32 +26,52 @@ export default async function initBotTelegram(): Promise<void> {
     });
 
     // Escutar mensagens de texto
-    bot.on("text", (msg) => {
-      if (msg.chat.id !== chatId) {
-        bot.sendMessage(
-          msg.chat.id,
+    bot.on("text", async (msg) => {
+      const userId = msg.chat.id;
+      const text = msg.text;
+      const firstName = msg.from?.first_name ?? "Usuário";
+
+      if (userId !== chatId) {
+        return bot.sendMessage(
+          userId,
           "Você não tem permissão para usar este bot. Entre em contato com o administrador."
         );
-        return;
       }
 
-      if (!msg.text) return;
-      else if (!ServerManager.getRunning())
+      if (!text) return;
+
+      // Comandos administrativos
+      if (text === "/startServer") {
+        await ServerManager.start();
         return bot.sendMessage(
           chatId,
-          "Servidor não está em execução. Não é possível executar comandos."
+          "Servidor iniciado (ou já estava em execução)."
         );
-      else if (ServerManager.getUpdating())
+      }
+
+      if (text === "/stopServer") {
+        await ServerManager.stop();
         return bot.sendMessage(
           chatId,
-          "Servidor está em atualização. Não é possível executar comandos."
+          "Servidor encerrado (ou já estava parado)."
         );
+      }
 
-      ServerManager.sendCommand(msg.text);
+      // Validações antes de executar comandos genéricos
+      if (!ServerManager.getRunning()) {
+        return bot.sendMessage(chatId, "Servidor não está em execução.");
+      }
 
-      bot.sendMessage(
+      if (ServerManager.getUpdating()) {
+        return bot.sendMessage(chatId, "Servidor está em atualização.");
+      }
+
+      // Envia comando genérico
+      await ServerManager.sendCommand(text);
+
+      return bot.sendMessage(
         chatId,
-        `${msg.from?.first_name}! seu comando foi enviado com sucesso! (Agora se funcionou ou não, já é outra história) \n\nComando: ${msg.text}`
+        `${firstName}, seu comando foi enviado com sucesso! 🚀\n\nComando: \`${text}\`\n(Agora se funcionou ou não, já é outra história 😅)`
       );
     });
   } catch (error) {
