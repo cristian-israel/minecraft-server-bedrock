@@ -1,6 +1,7 @@
 import { SERVER_DIR } from "./helpers/paths";
 
 import { ServerManager } from "./server/serverManager";
+import SystemInfo from "./helpers/system";
 import server from "./validations/server";
 import recentServer from "./validations/recentServer";
 import createBackupWorlds from "./backup/create";
@@ -10,7 +11,7 @@ import copyBackupWorlds from "./backup/copy";
 import extract from "./download/extract";
 import { logger } from "./helpers/logger";
 
-export default async function updateMinecraftServer() {
+export default async function MinecraftServer() {
   try {
     const { worldPath, version } = server();
     const { urlDownload, recentVersion } = await recentServer();
@@ -57,6 +58,9 @@ export default async function updateMinecraftServer() {
 
     // Atualizar version de server.json
     ServerManager.updateVersion(recentVersion);
+
+    // Atualizar permissoes
+    await SystemInfo.getInstance().validatePermissions();
 
     // Iniciar o servidor
     await ServerManager.start();

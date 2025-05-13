@@ -1,4 +1,8 @@
 import { platform } from "os";
+import { chmodSync } from "fs";
+import { join } from "path";
+import { SERVER_DIR } from "./paths"; // ajuste o caminho se necessário
+import { logger } from "./logger";
 
 export type SystemTypes = "Windows" | "Linux";
 
@@ -18,7 +22,27 @@ class SystemInfo {
     return SystemInfo.instance;
   }
 
-  public get systemType(): "Windows" | "Linux" {
+  public async validatePermissions(): Promise<void> {
+    if (this.systemType === "Linux") {
+      try {
+        chmodSync(join(SERVER_DIR, "bedrock_server"), 0o755);
+        logger({
+          context: "PERMISSIONS",
+          message: "Permissões de execução aplicadas ao bedrock_server.",
+          type: "info",
+        });
+      } catch (err) {
+        logger({
+          context: "PERMISSIONS",
+          message: `Erro ao aplicar permissão: ${err}`,
+          type: "error",
+        });
+        process.exit(1);
+      }
+    }
+  }
+
+  public get systemType(): SystemTypes {
     return this.osType;
   }
 
@@ -32,8 +56,5 @@ class SystemInfo {
     }
   }
 }
-
-// Uso:
-// const system = SystemInfo.getInstance().type;
 
 export default SystemInfo;
