@@ -183,7 +183,7 @@ export const ServerManager = {
         return resolve();
       }
 
-      if (systemType === "Windows") {
+      if (systemType === "Windows" || systemType === "Linux") {
         const onMessage = (message: string) => {
           if (message.includes("Quit correctly")) {
             logger({
@@ -216,8 +216,6 @@ export const ServerManager = {
         process.once("exit", onExit);
 
         this.sendCommand("stop");
-      } else if (systemType === "Linux") {
-        // DESENVOLVIMENTO
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
