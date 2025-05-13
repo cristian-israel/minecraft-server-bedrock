@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import initBotTelegram from "./telegram";
 import MinecraftServer from "./controller";
 import { logger } from "./helpers/logger";
+import { ServerManager } from "./server/serverManager";
 
 dotenv.config();
 console.clear();
@@ -28,6 +29,8 @@ console.clear();
       message: `Sistema de atualização do servidor Bedrock iniciado`,
       type: "success",
     });
+
+    await ServerManager.stop()
   } catch (error) {
     logger({
       context: "APP",

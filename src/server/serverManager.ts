@@ -156,13 +156,13 @@ export const ServerManager = {
         return resolve();
       }
 
-      if (systemType === "Windows" && process) {
+      if (process && (systemType === "Windows" || systemType === "Linux")) {
         const logCommand = `\n[SERVER] Comando enviado: ${command}\n`;
+        
         logStream.write(logCommand);
         process.stdin.write(command + "\n");
+
         return resolve();
-      } else if (systemType === "Linux") {
-        // DESENVOLVIMENTO
       } else {
         return reject(
           new Error("Comando não suportado para o sistema operacional atual.")
