@@ -2,16 +2,14 @@ module.exports = {
   apps: [
     {
       name: "minecraft_server_bedrock", // Nome visível no pm2 list
-      script: "dist/index.js", // Caminho do script compilado (para TypeScript, normalmente em dist/)
-      instances: 1, // Número de instâncias (1 = single-thread)
+      script: "src/index.ts", // Caminho do seu arquivo TypeScript de entrada
+      interpreter: "ts-node", // Permite rodar TS direto
+      watch: false,
+      instances: 1,
       autorestart: true,
-      watch: false, // Ative se quiser reiniciar ao detectar mudanças
-      max_memory_restart: "200M", // Reinicia se passar esse limite
+      max_memory_restart: "300M",
       env: {
         NODE_ENV: "production",
-      },
-      env_development: {
-        NODE_ENV: "development",
       },
     },
   ],
